@@ -3,7 +3,10 @@ main = "src/worker.js"
 compatibility_date = "2026-09-01"
 workers_dev = false
 
-routes = [{ pattern = "reef.technology83.com", custom_domain = true }]
+routes = [
+  { pattern = "aquarium.technology83.com", custom_domain = true },
+  { pattern = "reef.technology83.com", custom_domain = true }
+]
 
 [assets]
 directory = "./public"

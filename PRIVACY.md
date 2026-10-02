@@ -1,10 +1,10 @@
-# What Reef Aquarium sends, and what the site records
+# What Ultra Aquarium sends, and what the site records
 
 The code that does this is `app/Online.cs` (the app) and `web/src/worker.js` (the service).
 
 ## The app
 
-The app contacts `reef.technology83.com` when you open Settings, and at most once a day while the screensaver or the live wallpaper runs. The reply contains the latest version number and a short note from the developer.
+The app contacts `aquarium.technology83.com` when you open Settings, and at most once a day while the screensaver or the live wallpaper runs. The reply contains the latest version number and a short note from the developer.
 
 **"Share anonymous usage" off** (About page): the request contains the app's version number and nothing else. No install number exists on your computer while this is off.
 
@@ -27,4 +27,4 @@ The app never sends your name, email address, files, the text you type, or the d
 
 ## Updates
 
-When a newer version exists the app asks before updating. It downloads the zip from `reef.technology83.com`, checks its SHA-256 against the published value, and only then replaces its own files. Your settings are not touched.
+When a newer version exists the app asks before updating. It downloads the installer from `aquarium.technology83.com`, checks its SHA-256 against the published value, and only then runs it. Your settings are not touched.

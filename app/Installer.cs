@@ -15,43 +15,43 @@ public static class Installer
 
 	private const int SPIF = 3;
 
-	public static string InstallDir => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Technology83", "ReefAquarium");
+	/// <summary>Where the installer puts the app: %LocalAppData%\Programs\UltraAquarium (per user, no administrator rights).</summary>
+	public static string ProgramDir => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs", "UltraAquarium");
 
-	public static string ScrPath => Path.Combine(InstallDir, "ReefAquarium.scr");
+	/// <summary>The folder the app is running from. The screensaver runs from here too: there is no second copy to go stale.</summary>
+	public static string InstallDir => AppContext.BaseDirectory.TrimEnd('\\');
+
+	/// <summary>The screensaver file Windows starts: the same program under the .scr name, next to the app.</summary>
+	public static string ScrPath => Path.Combine(InstallDir, "UltraAquarium.scr");
 
 	[DllImport("user32.dll", CharSet = CharSet.Unicode)]
 	private static extern bool SystemParametersInfoW(int action, int param, nint v, int winIni);
 
+	/// <summary>Makes sure the .scr twin of the program exists and matches it (the installer ships one; a portable copy makes its own).</summary>
+	private static void EnsureScr()
+	{
+		string exe = Path.Combine(InstallDir, "UltraAquarium.exe");
+		if (!File.Exists(exe)) return;
+		var a = new FileInfo(exe);
+		var b = new FileInfo(ScrPath);
+		if (b.Exists && a.Length == b.Length && a.LastWriteTimeUtc == b.LastWriteTimeUtc) return;
+		CopyOver(exe, ScrPath);
+	}
+
+	/// <summary>The screensaver path Windows currently has, or "".</summary>
+	public static string CurrentScreensaver()
+	{
+		try
+		{
+			using RegistryKey k = Registry.CurrentUser.OpenSubKey("Control Panel\\Desktop");
+			return k?.GetValue("SCRNSAVE.EXE")?.ToString() ?? "";
+		}
+		catch { return ""; }
+	}
+
 	public static void Install(bool quiet)
 	{
-		//IL_00ed: Unknown result type (might be due to invalid IL or missing references)
-		string text = Environment.ProcessPath ?? throw new InvalidOperationException("no process path");
-		Directory.CreateDirectory(InstallDir);
-		string srcDir = Path.GetDirectoryName(Path.GetFullPath(text));
-		if (!string.Equals(srcDir.TrimEnd('\\'), Path.GetFullPath(InstallDir).TrimEnd('\\'), StringComparison.OrdinalIgnoreCase))
-		{
-			// the screensaver needs the whole program next to it: runtime files, libraries and the art
-			foreach (string f in Directory.GetFiles(srcDir, "*", SearchOption.AllDirectories))
-			{
-				string rel = Path.GetRelativePath(srcDir, f);
-				string first = rel.Split(Path.DirectorySeparatorChar)[0];
-				if (first.StartsWith("out", StringComparison.OrdinalIgnoreCase) || first.Equals("grok", StringComparison.OrdinalIgnoreCase)
-					|| first.Equals("source", StringComparison.OrdinalIgnoreCase) || rel.EndsWith(".cmd", StringComparison.OrdinalIgnoreCase)
-					|| rel.EndsWith(".log", StringComparison.OrdinalIgnoreCase) || (Path.GetFileName(rel).StartsWith("ReefAquarium_") && first == Path.GetFileName(rel)))
-				{
-					continue;
-				}
-				if (first.Equals("UserData", StringComparison.OrdinalIgnoreCase)) continue;   // settings live in the Windows profile
-				string dst = Path.Combine(InstallDir, rel);
-				Directory.CreateDirectory(Path.GetDirectoryName(dst));
-				CopyOver(f, dst);
-			}
-			CopyOver(text, ScrPath);
-		}
-		else if (!File.Exists(ScrPath) || !string.Equals(Path.GetFullPath(text), Path.GetFullPath(ScrPath), StringComparison.OrdinalIgnoreCase))
-		{
-			CopyOver(text, ScrPath);
-		}
+		EnsureScr();
 		using (RegistryKey registryKey = Registry.CurrentUser.CreateSubKey("Control Panel\\Desktop"))
 		{
 			registryKey.SetValue("SCRNSAVE.EXE", ScrPath);
@@ -66,7 +66,7 @@ public static class Installer
 		Log.Write("installed to " + ScrPath);
 		if (!quiet)
 		{
-			MessageBox.Show("Reef Aquarium is now your screensaver.\n\nOpen Screen Saver Settings to change the wait time or preview it.", "Reef Aquarium — Technology 83", (MessageBoxButtons)0, (MessageBoxIcon)64);
+			MessageBox.Show("Ultra Aquarium is now your screensaver.\n\nOpen Screen Saver Settings to change the wait time or preview it.", "Ultra Aquarium — Technology 83", (MessageBoxButtons)0, (MessageBoxIcon)64);
 		}
 	}
 
@@ -103,7 +103,7 @@ public static class Installer
 	public static void Uninstall()
 	{
 		using RegistryKey registryKey = Registry.CurrentUser.OpenSubKey("Control Panel\\Desktop", writable: true);
-		if ((registryKey?.GetValue("SCRNSAVE.EXE")?.ToString() ?? "").Contains("ReefAquarium", StringComparison.OrdinalIgnoreCase))
+		if ((registryKey?.GetValue("SCRNSAVE.EXE")?.ToString() ?? "").Contains("Aquarium.scr", StringComparison.OrdinalIgnoreCase))
 		{
 			registryKey.SetValue("SCRNSAVE.EXE", "");
 			registryKey.SetValue("ScreenSaveActive", "0");
@@ -111,13 +111,13 @@ public static class Installer
 		}
 	}
 
-	/// <summary>Is Reef Aquarium the current Windows screensaver?</summary>
+	/// <summary>Is Ultra Aquarium the current Windows screensaver?</summary>
 	public static bool IsInstalled()
 	{
 		try
 		{
 			using RegistryKey k = Registry.CurrentUser.OpenSubKey("Control Panel\\Desktop");
-			return (k?.GetValue("SCRNSAVE.EXE")?.ToString() ?? "").Contains("ReefAquarium", StringComparison.OrdinalIgnoreCase);
+			return (k?.GetValue("SCRNSAVE.EXE")?.ToString() ?? "").Contains("Aquarium.scr", StringComparison.OrdinalIgnoreCase);
 		}
 		catch { return false; }
 	}

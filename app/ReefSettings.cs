@@ -163,7 +163,7 @@ public sealed class ReefSettings
 
 	[JsonIgnore]
 	/// <summary>
-	/// One settings folder per Windows user (%AppData%\Technology83\ReefAquarium6), shared by the app wherever it
+	/// One settings folder per Windows user (%AppData%\Technology83\UltraAquarium), shared by the app wherever it
 	/// runs from - the unzipped folder, the installed screensaver copy, or a newer version after an update.
 	/// REEF_DATA overrides it. Settings from an older "UserData" folder beside the app move over once.
 	/// </summary>
@@ -175,16 +175,22 @@ public sealed class ReefSettings
 	{
 		string? env = Environment.GetEnvironmentVariable("REEF_DATA");
 		if (!string.IsNullOrEmpty(env)) return env;
-		string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Technology83", "ReefAquarium6");
+		string root = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Technology83");
+		string dir = Path.Combine(root, "UltraAquarium");
 		try
 		{
-			string old = Path.Combine(AppContext.BaseDirectory, "UserData");
-			if (!File.Exists(Path.Combine(dir, "settings.json")) && File.Exists(Path.Combine(old, "settings.json")))
+			if (!File.Exists(Path.Combine(dir, "settings.json")))
 			{
-				Directory.CreateDirectory(dir);
-				foreach (string f in Directory.GetFiles(old))
+				// settings from before the app was renamed (Reef Aquarium 6), or from a UserData folder beside the app
+				foreach (string old in new[] { Path.Combine(root, "ReefAquarium6"), Path.Combine(AppContext.BaseDirectory, "UserData") })
 				{
-					if (!f.EndsWith(".log", StringComparison.OrdinalIgnoreCase)) File.Copy(f, Path.Combine(dir, Path.GetFileName(f)), overwrite: false);
+					if (!File.Exists(Path.Combine(old, "settings.json"))) continue;
+					Directory.CreateDirectory(dir);
+					foreach (string f in Directory.GetFiles(old))
+					{
+						if (!f.EndsWith(".log", StringComparison.OrdinalIgnoreCase)) File.Copy(f, Path.Combine(dir, Path.GetFileName(f)), overwrite: false);
+					}
+					break;
 				}
 			}
 		}

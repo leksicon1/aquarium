@@ -20,7 +20,7 @@ namespace Reef;
 /// </summary>
 public static class Online
 {
-	public const string DefaultService = "https://reef.technology83.com";
+	public const string DefaultService = "https://aquarium.technology83.com";
 
 	private static string Service => (Environment.GetEnvironmentVariable("REEF_SERVICE") ?? DefaultService).TrimEnd('/');
 
@@ -86,7 +86,7 @@ public static class Online
 	private static HttpClient Client()
 	{
 		var c = new HttpClient { Timeout = TimeSpan.FromSeconds(12) };
-		c.DefaultRequestHeaders.UserAgent.ParseAdd("ReefAquarium/" + Version);
+		c.DefaultRequestHeaders.UserAgent.ParseAdd("UltraAquarium/" + Version);
 		return c;
 	}
 
@@ -225,7 +225,7 @@ public static class Online
 		}
 	}
 
-	/// <summary>"ReefAquarium.exe /selfupdate": check, download and install a newer version without any window.</summary>
+	/// <summary>"UltraAquarium.exe /selfupdate": check, download and install a newer version without any window.</summary>
 	public static int SelfUpdate()
 	{
 		try
@@ -236,7 +236,6 @@ public static class Online
 				Log.Write($"self-update: {Version} is the latest (service says {Current.LatestVersion})");
 				return 0;
 			}
-			if (!CanUpdateInPlace()) { Log.Write("self-update: folder is not writable"); return 2; }
 			string files = DownloadUpdate(null).GetAwaiter().GetResult();
 			bool wallpaper = Wallpaper.IsRunning();
 			if (wallpaper) Wallpaper.StopAll();
@@ -273,36 +272,23 @@ public static class Online
 
 	// ------------------------------------------------------------------ self-update
 
-	/// <summary>Is the folder the app runs from writable (needed to update in place)?</summary>
-	public static bool CanUpdateInPlace()
-	{
-		try
-		{
-			string probe = Path.Combine(AppContext.BaseDirectory, ".update-test");
-			File.WriteAllText(probe, "");
-			File.Delete(probe);
-			return true;
-		}
-		catch { return false; }
-	}
-
 	/// <summary>Downloads the new version, checks it against the published SHA-256 and unpacks it. Returns the unpacked folder.</summary>
 	public static async Task<string> DownloadUpdate(IProgress<double>? progress, CancellationToken cancel = default)
 	{
 		State st = Current;
 		if (!UpdateAvailable) throw new InvalidOperationException("No update is available.");
-		string work = Path.Combine(Path.GetTempPath(), "ReefAquariumUpdate");
+		string work = Path.Combine(Path.GetTempPath(), "UltraAquariumUpdate");
 		if (Directory.Exists(work)) Directory.Delete(work, recursive: true);
 		Directory.CreateDirectory(work);
-		string zip = Path.Combine(work, "update.zip");
-		using (var c = new HttpClient { Timeout = TimeSpan.FromMinutes(20) })
+		string msi = Path.Combine(work, $"UltraAquarium-{st.LatestVersion}.msi");
+		using (var c = new HttpClient { Timeout = TimeSpan.FromMinutes(30) })
 		{
-			c.DefaultRequestHeaders.UserAgent.ParseAdd("ReefAquarium/" + Version + " updater");
+			c.DefaultRequestHeaders.UserAgent.ParseAdd("UltraAquarium/" + Version + " updater");
 			using HttpResponseMessage r = await c.GetAsync(st.Url, HttpCompletionOption.ResponseHeadersRead, cancel);
 			r.EnsureSuccessStatusCode();
 			long total = r.Content.Headers.ContentLength ?? st.Size;
 			await using Stream src = await r.Content.ReadAsStreamAsync(cancel);
-			await using FileStream dst = File.Create(zip);
+			await using FileStream dst = File.Create(msi);
 			byte[] buf = new byte[1 << 16];
 			long done = 0;
 			int n;
@@ -314,42 +300,32 @@ public static class Online
 			}
 		}
 		string hash;
-		await using (FileStream f = File.OpenRead(zip)) hash = Convert.ToHexString(await SHA256.HashDataAsync(f, cancel)).ToLowerInvariant();
-		if (hash != st.Sha256) throw new InvalidDataException("The download didn't match the published file, so it was not installed.");
-		string outDir = Path.Combine(work, "new");
-		ZipFile.ExtractToDirectory(zip, outDir);
-		File.Delete(zip);
-		string? exe = Directory.GetFiles(outDir, "ReefAquarium.exe", SearchOption.AllDirectories).OrderBy(p => p.Length).FirstOrDefault();
-		if (exe == null) throw new InvalidDataException("The download doesn't contain the app.");
-		return Path.GetDirectoryName(exe)!;
+		await using (FileStream f = File.OpenRead(msi)) hash = Convert.ToHexString(await SHA256.HashDataAsync(f, cancel)).ToLowerInvariant();
+		if (hash != st.Sha256)
+		{
+			File.Delete(msi);
+			throw new InvalidDataException("The download didn't match the published file, so it was not installed.");
+		}
+		// a Windows Installer package starts with the compound-file signature; anything else is not installed
+		byte[] head = new byte[8];
+		await using (FileStream f = File.OpenRead(msi)) await f.ReadExactlyAsync(head, cancel);
+		if (!head.AsSpan().SequenceEqual(new byte[] { 0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1 })) throw new InvalidDataException("The download is not an installer package.");
+		return msi;
 	}
 
 	/// <summary>
-	/// Replaces the app's files with the unpacked new version and starts it again. The caller must exit right
-	/// after this returns; the copy happens once this process is gone. Settings (UserData) are never touched.
+	/// Runs the downloaded installer (the standard Windows Installer, with a small progress window) once this
+	/// process has exited, then starts the new version. The caller must exit right after this returns.
+	/// Settings are kept: they live in the Windows profile, not in the program folder.
 	/// </summary>
-	public static void ApplyUpdateAndRestart(string newFiles, bool restartWallpaper, bool openSettings = true)
+	public static void ApplyUpdateAndRestart(string msi, bool restartWallpaper, bool openSettings = true)
 	{
-		string app = AppContext.BaseDirectory.TrimEnd('\\');
-		string exe = Path.Combine(app, "ReefAquarium.exe");
-		string script = Path.Combine(Path.GetTempPath(), "ReefAquariumUpdate", "apply.cmd");
-		bool reinstallSaver = Installer.IsInstalled() && !string.Equals(Path.GetFullPath(Installer.InstallDir).TrimEnd('\\'), Path.GetFullPath(app), StringComparison.OrdinalIgnoreCase);
-		var sb = new StringBuilder();
-		sb.AppendLine("@echo off");
-		sb.AppendLine(":wait");
-		sb.AppendLine($"tasklist /fi \"PID eq {Environment.ProcessId}\" 2>nul | find \" {Environment.ProcessId} \" >nul && (timeout /t 1 /nobreak >nul & goto wait)");
-		sb.AppendLine("set tries=0");
-		sb.AppendLine(":copy");
-		sb.AppendLine($"robocopy \"{newFiles}\" \"{app}\" /e /r:5 /w:1 /xd UserData >nul");
-		sb.AppendLine("if not errorlevel 8 goto copied");
-		sb.AppendLine("set /a tries+=1");
-		sb.AppendLine("if %tries% lss 5 (timeout /t 2 /nobreak >nul & goto copy)");
-		sb.AppendLine(":copied");
-		if (reinstallSaver) sb.AppendLine($"\"{exe}\" /install quiet");
-		if (restartWallpaper) sb.AppendLine($"start \"\" \"{exe}\" /wallpaper");
-		if (openSettings) sb.AppendLine($"start \"\" \"{exe}\"");
-		sb.AppendLine($"rmdir /s /q \"{Path.GetDirectoryName(newFiles.TrimEnd('\\'))}\" 2>nul");
-		File.WriteAllText(script, sb.ToString(), Encoding.Default);
-		Process.Start(new ProcessStartInfo("cmd.exe", $"/c \"\"{script}\"\"") { CreateNoWindow = true, UseShellExecute = false, WorkingDirectory = Path.GetTempPath() });
+		string exe = Path.Combine(Installer.ProgramDir, "UltraAquarium.exe");
+		string after = "";
+		if (restartWallpaper) after += $" & start \"\" \"{exe}\" /wallpaper";
+		// the installer opens the app itself when it finishes, unless told not to
+		string noLaunch = openSettings ? "" : " NOLAUNCH=1";
+		string command = $"/c \"ping -n 3 127.0.0.1 >nul & msiexec /i \"{msi}\" /passive /norestart{noLaunch}{after}\"";
+		Process.Start(new ProcessStartInfo("cmd.exe", command) { CreateNoWindow = true, UseShellExecute = false, WorkingDirectory = Path.GetTempPath() });
 	}
 }

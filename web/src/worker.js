@@ -1,4 +1,4 @@
-// Reef Aquarium service for reef.technology83.com
+// Ultra Aquarium service for aquarium.technology83.com (reef.technology83.com is kept for older builds)
 //   /                 download page
 //   /download         the installer zip (stored as parts under /dl, streamed as one file, each download logged)
 //   /api/hello        the app's check-in: returns the latest version and the developer note; records usage
@@ -80,7 +80,7 @@ async function download(req, env, origin) {
     } catch (e) { console.log("download db", e.message); }
   }
   const headers = {
-    "content-type": "application/zip",
+    "content-type": rel.file.endsWith(".msi") ? "application/x-msi" : "application/zip",
     "content-length": String(rel.size),
     "content-disposition": `attachment; filename="${rel.file}"`,
     "cache-control": "no-store",

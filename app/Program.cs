@@ -18,7 +18,7 @@ public static class Program
 		Application.ThreadException += (_, e) =>
 		{
 			Log.Write("UI " + e.Exception);
-			try { MessageBox.Show("Something went wrong: " + e.Exception.Message + "\n\nDetails were saved to the diagnostics log.", "Reef Aquarium"); } catch { }
+			try { MessageBox.Show("Something went wrong: " + e.Exception.Message + "\n\nDetails were saved to the diagnostics log.", "Ultra Aquarium"); } catch { }
 		};
 		Win32.EnableDpiAwareness();
 		CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
@@ -32,14 +32,28 @@ public static class Program
 				Application.EnableVisualStyles();
 				Application.SetCompatibleTextRenderingDefault(false);
 				Application.SetHighDpiMode((HighDpiMode)3);
-				// the window is rebuilt for the new screen when it is dragged to one with different display scaling
-				do
+				// one settings window at a time: a second start just brings the first one to the front
+				using (var single = new System.Threading.Mutex(true, "Local\\Technology83.UltraAquarium.Settings", out bool first))
 				{
-					SettingsForm.Reopen = false;
-					Application.Run(new SettingsForm());
+					if (!first)
+					{
+						nint other = Win32.FindWindowW(null, SettingsForm.WindowTitle);
+						if (other != 0)
+						{
+							Win32.ShowWindow(other, 9);   // restore if minimised
+							Win32.SetForegroundWindow(other);
+						}
+						return 0;
+					}
+					// the window is rebuilt for the new screen when it is dragged to one with different display scaling
+					do
+					{
+						SettingsForm.Reopen = false;
+						Application.Run(new SettingsForm());
+					}
+					while (SettingsForm.Reopen);
+					return 0;
 				}
-				while (SettingsForm.Reopen);
-				return 0;
 			case Mode.Install:
 				Installer.Install(options.Layout == "quiet");
 				return 0;
@@ -68,7 +82,7 @@ public static class Program
 			{
 				try
 				{
-					MessageBox.Show(ex.Message, "Reef Aquarium", (MessageBoxButtons)0, (MessageBoxIcon)16);
+					MessageBox.Show(ex.Message, "Ultra Aquarium", (MessageBoxButtons)0, (MessageBoxIcon)16);
 				}
 				catch
 				{
@@ -218,6 +232,9 @@ public static class Program
 			case "--seconds":
 				Options.RunSeconds = F(text4);
 				i++;
+				break;
+			case "--fullscreen":
+				Options.Fullscreen = true;
 				break;
 			case "--bench":
 				options.Bench = int.Parse(text4);

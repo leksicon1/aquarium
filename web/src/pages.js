@@ -12,55 +12,78 @@ button:focus-visible,.btn:focus-visible,textarea:focus-visible,input:focus-visib
 
 export function page(rel) {
   const v = rel ? esc(rel.version) : "";
-  const mb = rel ? (rel.size / 1048576).toFixed(0) : "";
+  const mb = rel ? Math.round(rel.size / 1048576) : "";
+  const media = rel && rel.video
+    ? `<video class="media" autoplay muted loop playsinline poster="/hero.jpg"><source src="${esc(rel.video)}" type="video/mp4"></video>`
+    : `<img class="media" src="/hero.jpg" alt="A coral reef full of fish, shown running across three monitors">`;
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Reef Aquarium — a living reef for your Windows desktop</title>
-<meta name="description" content="A 3D coral reef screensaver and live wallpaper for Windows, across every screen you own. By Technology 83.">
-<style>${base}
-.hero{position:relative;min-height:78vh;display:flex;align-items:flex-end;background:#04101a url(/hero.jpg) center/cover no-repeat}
-.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,19,28,.05) 30%,rgba(6,19,28,.92) 88%,var(--bg))}
-.in{position:relative;z-index:1;width:100%;max-width:1040px;margin:0 auto;padding:0 20px 44px}
-.brand{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700}
-h1{font-size:clamp(34px,6vw,64px);line-height:1.04;margin:10px 0 14px;font-weight:700;letter-spacing:-.01em;text-wrap:balance}
-.lead{font-size:clamp(17px,2.2vw,21px);color:#cfe1e8;max-width:36em;margin:0 0 26px}
-.cta{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
-.cta .btn{font-size:18px;padding:15px 30px}
-.meta{color:var(--sub);font-size:14px}
-main{max-width:1040px;margin:0 auto;padding:34px 20px 70px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:26px 34px}
-h2{font-size:17px;margin:0 0 4px}
-.grid p{margin:0;color:var(--sub);font-size:15px}
-.fine{margin-top:44px;padding-top:22px;border-top:1px solid var(--line);color:var(--sub);font-size:14px;max-width:62em}
-.fine h2{color:var(--text);font-size:15px;margin-top:16px}
-footer{color:var(--sub);font-size:13px;padding:0 20px 34px;max-width:1040px;margin:0 auto}
-</style></head><body>
-<header class="hero"><div class="in">
-<div class="brand">Technology 83</div>
-<h1>Reef Aquarium</h1>
-<p class="lead">A living 3D coral reef for your Windows desktop. Run it as a screensaver or as a live wallpaper, across every screen you own.</p>
-<div class="cta">${rel ? `<a class="btn" href="/download">Download for Windows</a><span class="meta">Version ${v} · ${mb} MB · Windows 10 and 11, 64-bit</span>` : `<span class="meta">The download will be here shortly.</span>`}</div>
-</div></header>
+<title>Ultra Aquarium: one aquarium across all your screens</title>
+<meta name="description" content="A free 3D aquarium for Windows. Screensaver and live wallpaper that treats two, three or four monitors as one tank.">
+<meta property="og:title" content="Ultra Aquarium"><meta property="og:image" content="/logo.jpg">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Michroma&display=swap" rel="stylesheet">
+<style>
+:root{--abyss:#050b18;--deep:#0a1830;--line:#16305a;--electric:#1fa3ff;--ice:#d9ecff;--mute:#8aa6c8;--koi:#ff8a2a}
+*{box-sizing:border-box}
+html{background:var(--abyss)}
+body{margin:0;color:var(--ice);font:17px/1.6 Manrope,"Segoe UI",system-ui,sans-serif}
+a{color:var(--electric)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+header.top{display:flex;align-items:center;gap:12px;padding:20px 0}
+header.top img{width:40px;height:40px}
+.name{font-family:Michroma,"Segoe UI",sans-serif;font-size:15px;letter-spacing:.06em}
+.name small{display:block;font:600 12px Manrope,sans-serif;color:var(--mute);letter-spacing:0}
+h1{font-family:Michroma,"Segoe UI",sans-serif;font-weight:400;font-size:clamp(26px,4.6vw,50px);line-height:1.16;margin:26px 0 16px;max-width:17em;text-wrap:balance}
+.lead{font-size:clamp(17px,1.9vw,20px);color:#bcd3ee;max-width:38em;margin:0 0 26px}
+.get{display:flex;flex-wrap:wrap;align-items:center;gap:14px 18px;margin-bottom:38px}
+.btn{display:inline-block;background:var(--koi);color:#1c0c00;font-weight:700;font-size:18px;text-decoration:none;padding:15px 28px;border-radius:8px}
+.btn:hover{background:#ffa04f}
+.btn:focus-visible,a:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.meta{color:var(--mute);font-size:15px}
+/* the wall: one picture running across three monitors, the way the app shows it */
+.wall{position:relative;aspect-ratio:48/9;border-radius:10px;overflow:hidden;background:#000}
+.wall .media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.wall i{position:absolute;top:0;bottom:0;width:1.1%;background:var(--abyss)}
+.wall i:nth-of-type(1){left:32.78%}.wall i:nth-of-type(2){left:66.11%}
+.wall b{position:absolute;inset:0;border:3px solid #0e1626;border-radius:10px;pointer-events:none}
+.feet{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1%;margin:0 0 54px}
+.feet span{justify-self:center;width:22%;height:14px;background:linear-gradient(#0e1626,#0a1220);border-radius:0 0 8px 8px}
+.points{display:grid;grid-template-columns:repeat(4,1fr);gap:30px 36px;margin:0 0 56px}
+@media (max-width:980px){.points{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:520px){.points{grid-template-columns:1fr}}
+.points h2{font-size:18px;font-weight:700;margin:0 0 4px;color:#fff}
+.points p{margin:0;color:#a9c2e0;font-size:16px}
+.plain{border-top:1px solid var(--line);padding:30px 0 10px;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:26px 44px;color:#a9c2e0;font-size:15.5px}
+.plain h2{font-size:16px;color:#fff;margin:0 0 6px}
+.plain p{margin:0}
+footer{color:var(--mute);font-size:13.5px;padding:34px 0 40px}
+@media (max-width:640px){.wall{aspect-ratio:16/9}.wall i{display:none}.feet{display:none}.wall{margin-bottom:40px}}
+</style></head><body><div class="wrap">
+<header class="top"><img src="/icon.png" alt=""><div class="name">Ultra Aquarium<small>by Technology 83</small></div></header>
 <main>
-<div class="grid">
-<div><h2>Real 3D fish</h2><p>Schools that bend, bank and catch the light, with a turtle, a shark or a manta ray gliding through now and then.</p></div>
-<div><h2>Every screen at once</h2><p>One reef spanning all your monitors, or only the ones you pick.</p></div>
-<div><h2>Light on your computer</h2><p>Starts at full resolution on the lightest setting. A quality slider and separate shadow, resolution and fish controls let you tune it.</p></div>
-<div><h2>Make it yours</h2><p>Design your own fish, add a clock, and let a school of fish swim through your own words.</p></div>
+<h1>One aquarium across all your screens.</h1>
+<p class="lead">Ultra Aquarium is a free 3D aquarium for Windows. It runs as your screensaver or as live wallpaper, and it treats two, three or four monitors as a single tank, so a shark can cross from one screen to the next.</p>
+<div class="get">${rel ? `<a class="btn" href="/download">Download for Windows</a><span class="meta">Free. Version ${v}, ${mb} MB. Windows 10 or 11, 64-bit.</span>` : `<span class="meta">The download will be here shortly.</span>`}</div>
+<div class="wall">${media}<i></i><i></i><b></b></div>
+<div class="feet"><span></span><span></span><span></span></div>
+<div class="points">
+<div><h2>Pick your screens</h2><p>Choose which monitors show the aquarium. The others keep your desktop, or go black while the screensaver runs.</p></div>
+<div><h2>Mixed setups are fine</h2><p>Different sizes, resolutions and refresh rates work together. Enter your bezel width and the picture lines up across the gap.</p></div>
+<div><h2>Feed the fish</h2><p>Press F and a pinch of food drops in from the surface. The nearest fish come over to eat.</p></div>
+<div><h2>Runs on a laptop</h2><p>The lowest quality setting is built for integrated graphics. Turn it up when you have the hardware.</p></div>
 </div>
-<div class="fine">
-<h2>How to install</h2>
-Unzip the download anywhere you like and open <b>ReefAquarium.exe</b>. Windows may ask you to install the free .NET 8 Desktop Runtime the first time. The app checks this site for new versions and offers to update itself.
-<h2>What the app sends</h2>
-When it checks for updates the app tells this site its version; the country is worked out from the connection. With "Share anonymous usage" on (you can switch it off under About), it also sends a random install number, your Windows version, graphics card, screen sizes and which features and settings are in use. It never sends your name, email, files, or anything you type.
+<div class="plain">
+<div><h2>Installing</h2><p>Run the installer and Ultra Aquarium opens when it finishes. If Windows asks for the .NET 8 Desktop Runtime, say yes: it is a free Microsoft component that many apps share. When a new version is out, the app asks before updating.</p></div>
 </div>
 </main>
 <footer>© 2026 Technology 83 Systems Ltd.</footer>
-</body></html>`;
+</div></body></html>`;
 }
 
 export function adminPage() {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex"><title>Reef Aquarium — developer area</title>
+<meta name="robots" content="noindex"><title>Ultra Aquarium developer area</title>
 <style>${base}
 main{max-width:1100px;margin:0 auto;padding:26px 16px 80px}
 h1{font-size:24px;margin:0}
@@ -95,7 +118,7 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
   <div class="row"><button type="submit" id="loginBtn">Sign in</button><span id="loginMsg" class="err" role="status"></span></div></form>
 </section>
 <div id="app" hidden>
-  <div class="top"><h1>Reef Aquarium · developer area</h1><button class="ghost" id="out">Sign out</button></div>
+  <div class="top"><h1>Ultra Aquarium developer area</h1><button class="ghost" id="out">Sign out</button></div>
   <section class="card">
     <h2>Note shown on the app's Home page</h2>
     <label for="note">Everyone sees this the next time their app checks in (at most a day later; straight away when they open Settings). Leave it empty to show nothing.</label>
