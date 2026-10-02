@@ -17,7 +17,13 @@ export function page(rel) {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Ultra Aquarium: one aquarium across all your screens</title>
 <meta name="description" content="A free 3D aquarium for Windows. Screensaver and live wallpaper that treats two, three or four monitors as one tank.">
-<meta property="og:title" content="Ultra Aquarium"><meta property="og:image" content="/logo.jpg">
+<link rel="canonical" href="https://aquarium.technology83.com/">
+<meta property="og:type" content="website"><meta property="og:url" content="https://aquarium.technology83.com/">
+<meta property="og:title" content="Ultra Aquarium: one aquarium across all your screens">
+<meta property="og:description" content="A free 3D aquarium screensaver and live wallpaper for Windows that treats two, three or four monitors as one tank.">
+<meta property="og:image" content="https://aquarium.technology83.com/og.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Ultra Aquarium","applicationCategory":"MultimediaApplication","operatingSystem":"Windows 10, Windows 11","description":"A free 3D aquarium screensaver and live wallpaper for Windows that runs as one tank across multiple monitors.","url":"https://aquarium.technology83.com/","image":"https://aquarium.technology83.com/og.jpg","softwareVersion":"${v}","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"Technology 83 Systems Ltd."}}</script>
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Michroma&display=swap" rel="stylesheet">
