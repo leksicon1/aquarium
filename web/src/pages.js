@@ -112,7 +112,7 @@ footer{color:var(--mute);font-size:13.5px;padding:34px 0 40px}
 <div class="f"><img src="/f-turtle.jpg" loading="lazy" width="1120" height="630" alt="A sea turtle swimming above the reef"><div><h3>Screensaver, wallpaper, or both</h3><p>Run it as the Windows screensaver, as live wallpaper behind your icons, or full screen whenever you want to watch. Ten quality levels go from integrated graphics up to a gaming card, and an optional readout shows the frame rate.</p></div></div>
 </section>
 </main>
-<footer>© 2026 Technology 83 Systems Ltd.</footer>
+<footer>© 2026 Technology 83 Systems Ltd. · <a href="https://github.com/leksicon1/aquarium">Source and release history on GitHub</a></footer>
 </div>
 <script>
 // The backdrop video starts only after the page itself has loaded, in a size that suits the screen.
