@@ -13,9 +13,7 @@ button:focus-visible,.btn:focus-visible,textarea:focus-visible,input:focus-visib
 export function page(rel) {
   const v = rel ? esc(rel.version) : "";
   const mb = rel ? Math.round(rel.size / 1048576) : "";
-  const media = rel && rel.video
-    ? `<video class="media" autoplay muted loop playsinline poster="/hero.jpg"><source src="${esc(rel.video)}" type="video/mp4"></video>`
-    : `<img class="media" src="/hero.jpg" alt="A coral reef full of fish, shown running across three monitors">`;
+  const media = `<img class="media" src="/hero.jpg" loading="lazy" alt="A coral reef full of fish, shown running across three monitors">`;
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Ultra Aquarium: one aquarium across all your screens</title>
 <meta name="description" content="A free 3D aquarium for Windows. Screensaver and live wallpaper that treats two, three or four monitors as one tank.">
@@ -30,7 +28,25 @@ html{background:var(--abyss)}
 body{margin:0;color:var(--ice);font:17px/1.6 Manrope,"Segoe UI",system-ui,sans-serif}
 a{color:var(--electric)}
 .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
-header.top{display:flex;align-items:center;gap:12px;padding:20px 0}
+/* the video is the app itself, recorded at 60 frames a second, shown whole with only a soft shade behind the headline */
+.hero{position:relative;background:var(--abyss)}
+.hero video{display:block;width:100%;aspect-ratio:16/9;max-height:100vh;object-fit:contain;background:var(--abyss)}
+.hero .shade{position:absolute;left:0;right:0;bottom:0;height:46%;background:linear-gradient(180deg,rgba(5,11,24,0),rgba(5,11,24,.78) 62%,var(--abyss));pointer-events:none}
+.hero .say{position:absolute;left:0;right:0;bottom:0;padding-bottom:30px;text-shadow:0 1px 14px rgba(3,8,18,.9)}
+.hero .say h1{margin-top:0}
+.hero .get{margin-bottom:0}
+@media (max-width:820px){.hero .shade{display:none}.hero .say{position:static;padding:22px 0 0;text-shadow:none}}
+header.top{position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:2;display:flex;align-items:center;gap:12px;padding:16px 46px 26px;white-space:nowrap;text-shadow:0 1px 10px rgba(3,8,18,.9);background:radial-gradient(ellipse at 50% 40%,rgba(5,11,24,.62),rgba(5,11,24,.3) 45%,rgba(5,11,24,0) 70%)}
+.feat{border-top:1px solid var(--line);padding:44px 0 6px}
+.feat>h2{font-family:Michroma,"Segoe UI",sans-serif;font-weight:400;font-size:clamp(20px,2.6vw,28px);margin:0 0 30px}
+.f{display:grid;grid-template-columns:1.25fr 1fr;gap:34px;align-items:center;margin:0 0 46px}
+.f:nth-of-type(even) img{order:2}
+.f img{width:100%;height:auto;border-radius:8px;display:block}
+.f h3{font-size:21px;color:#fff;margin:0 0 8px}
+.f p{margin:0;color:#a9c2e0}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media (max-width:760px){.f{grid-template-columns:1fr;gap:14px}.f:nth-of-type(even) img,.f:nth-of-type(even) .pair{order:0}}
+.f:nth-of-type(even) .pair{order:2}
 header.top img{width:40px;height:40px}
 .name{font-family:Michroma,"Segoe UI",sans-serif;font-size:15px;letter-spacing:.06em}
 .name small{display:block;font:600 12px Manrope,sans-serif;color:var(--mute);letter-spacing:0}
@@ -59,12 +75,22 @@ h1{font-family:Michroma,"Segoe UI",sans-serif;font-weight:400;font-size:clamp(26
 .plain p{margin:0}
 footer{color:var(--mute);font-size:13.5px;padding:34px 0 40px}
 @media (max-width:640px){.wall{aspect-ratio:16/9}.wall i{display:none}.feet{display:none}.wall{margin-bottom:40px}}
-</style></head><body><div class="wrap">
+.wallwrap{padding-top:34px}
+.hero .meta{color:#c4d8f0}
+@media (max-width:820px){header.top{padding:8px 26px 14px;gap:8px}header.top img{width:26px;height:26px}.name{font-size:11px}.name small{font-size:9.5px}}
+</style></head><body>
+<section class="hero">
 <header class="top"><img src="/icon.png" alt=""><div class="name">Ultra Aquarium<small>by Technology 83</small></div></header>
-<main>
+<video id="bg" muted loop playsinline preload="none" poster="/hero-poster.jpg" aria-label="Ultra Aquarium running, recorded at 60 frames per second"></video>
+<div class="shade"></div>
+<div class="say"><div class="wrap">
 <h1>One aquarium across all your screens.</h1>
-<p class="lead">Ultra Aquarium is a free 3D aquarium for Windows. It runs as your screensaver or as live wallpaper, and it treats two, three or four monitors as a single tank, so a shark can cross from one screen to the next.</p>
 <div class="get">${rel ? `<a class="btn" href="/download">Download for Windows</a><span class="meta">Free. Version ${v}, ${mb} MB. Windows 10 or 11, 64-bit.</span>` : `<span class="meta">The download will be here shortly.</span>`}</div>
+</div></div>
+</section>
+<div class="wrap wallwrap"><main>
+<p class="lead">Ultra Aquarium is a free 3D aquarium for Windows. It runs as your screensaver or as live wallpaper, and it treats two, three or four monitors as a single tank, so a shark can cross from one screen to the next. The video above is the app itself, recorded at 60 frames a second.</p>
+
 <div class="wall">${media}<i></i><i></i><b></b></div>
 <div class="feet"><span></span><span></span><span></span></div>
 <div class="points">
@@ -76,9 +102,35 @@ footer{color:var(--mute);font-size:13.5px;padding:34px 0 40px}
 <div class="plain">
 <div><h2>Installing</h2><p>Run the installer and Ultra Aquarium opens when it finishes. If Windows asks for the .NET 8 Desktop Runtime, say yes: it is a free Microsoft component that many apps share. When a new version is out, the app asks before updating.</p></div>
 </div>
+<section class="feat">
+<h2>What's in the tank</h2>
+<div class="f"><img src="/f-manta.jpg" loading="lazy" width="1120" height="630" alt="A manta ray gliding over the reef"><div><h3>Visitors drop by</h3><p>Every so often something big swims through: a manta ray, a shark, a sea turtle, a whale in the distance, or a bait ball that the reef fish scatter around. You choose which ones can show up and how often. On several monitors they cross from one screen to the next.</p></div></div>
+<div class="f"><img src="/f-feed.jpg" loading="lazy" width="1120" height="630" alt="Fish gathering at the surface around falling food"><div><h3>Feed the fish</h3><p>Press F and food drops in from the surface. The nearest fish break off and come to eat. Keep pressing and more of them join in. The key is yours to change.</p></div></div>
+<div class="f"><div class="pair"><img src="/f-dusk.jpg" loading="lazy" width="1120" height="630" alt="The reef in warm evening light"><img src="/f-night.jpg" loading="lazy" width="1120" height="630" alt="The reef at night with glowing coral"></div><div><h3>It follows your day</h3><p>The light in the tank tracks the clock on your PC. Mornings are bright, evenings turn warm, and at night the water goes dark and the coral glows. You can also pin it to one time of day.</p></div></div>
+<div class="f"><div class="pair"><img src="/f-settings.jpg" loading="lazy" alt="The My Fish page in settings, with sliders for a fish called Sunset Tang"><img src="/f-myfish.jpg" loading="lazy" width="1120" height="630" alt="Custom striped fish swimming with the others"></div><div><h3>Design your own fish</h3><p>Name a fish, set its length, body shape, colours and pattern, and decide how many there are and whether they school or glow at night. They join the reef beside the built-in species.</p></div></div>
+<div class="f"><img src="/f-clock.jpg" loading="lazy" width="1120" height="630" alt="The aquarium with a small clock in the top corner"><div><h3>A clock and your own words</h3><p>Put a clock in a corner, in the font and size you like. You can also give the tank a line of text: written in the sand, or spelled out by a school of fish that gathers into the letters and drifts apart again.</p></div></div>
+<div class="f"><img src="/f-turtle.jpg" loading="lazy" width="1120" height="630" alt="A sea turtle swimming above the reef"><div><h3>Screensaver, wallpaper, or both</h3><p>Run it as the Windows screensaver, as live wallpaper behind your icons, or full screen whenever you want to watch. Ten quality levels go from integrated graphics up to a gaming card, and an optional readout shows the frame rate.</p></div></div>
+</section>
 </main>
 <footer>© 2026 Technology 83 Systems Ltd.</footer>
-</div></body></html>`;
+</div>
+<script>
+// The backdrop video starts only after the page itself has loaded, in a size that suits the screen.
+// On a slow or data-saving connection, or when the visitor prefers less motion, the still picture stays.
+addEventListener("load", function () {
+  var v = document.getElementById("bg"), c = navigator.connection || {};
+  var still = matchMedia("(prefers-reduced-motion: reduce)").matches || c.saveData || /(^|-)2g/.test(c.effectiveType || "");
+  if (!v || still) return;
+  // phones get the 720p file; larger screens get 1080p, as AV1 where the browser can play it (sharper at the same size)
+  var px = Math.min(innerWidth, screen.width) * Math.min(devicePixelRatio || 1, 2);
+  var av1 = v.canPlayType('video/mp4; codecs="av01.0.09M.08"') === "probably";
+  v.src = px <= 900 ? "/hero-720.mp4" : av1 ? "/hero-1080-av1.mp4" : "/hero-1080.mp4";
+  // if the chosen file fails for any reason, fall back to the plain H.264 one
+  v.addEventListener("error", function () { if (!/hero-1080\.mp4$/.test(v.src) && px > 900) { v.src = "/hero-1080.mp4"; v.play().catch(function () {}); } }, { once: true });
+  var p = v.play(); if (p && p.catch) p.catch(function () {});
+});
+</script>
+</body></html>`;
 }
 
 export function adminPage() {
