@@ -217,9 +217,13 @@ async function admin(req, env, url) {
 
 // Video files answer byte-range requests (206), which iPhones and iPads require before they will play a video.
 async function video(req, env) {
-  const r = await env.ASSETS.fetch(new Request(req.url, { method: "GET" }));
+  const u = new URL(req.url), save = u.searchParams.has("save");
+  u.search = "";
+  const r = await env.ASSETS.fetch(new Request(u.toString(), { method: "GET" }));
   if (!r.ok) return r;
   const head = { "content-type": "video/mp4", "accept-ranges": "bytes", "cache-control": "public, max-age=86400" };
+  // ?save makes the browser download the file instead of playing it, so a phone can keep it
+  if (save) head["content-disposition"] = 'attachment; filename="UltraAquarium.mp4"';
   const range = /^bytes=(\d*)-(\d*)$/.exec(req.headers.get("range") || "");
   if (!range) {
     const size = r.headers.get("content-length");
