@@ -91,7 +91,7 @@ footer{color:var(--mute);font-size:13.5px;padding:34px 0 40px}
 <div class="shade"></div>
 <div class="say"><div class="wrap">
 <h1>One aquarium across all your screens.</h1>
-<div class="get">${rel ? `<a class="btn" href="/download">Download for Windows</a><span class="meta">Free. Version ${v}, ${mb} MB. Windows 10 or 11, 64-bit.</span>` : `<span class="meta">The download will be here shortly.</span>`}</div>
+<div class="get">${rel ? `<a class="btn" href="/download" rel="nofollow">Download for Windows</a><span class="meta">Free. Version ${v}, ${mb} MB. Windows 10 or 11, 64-bit.</span>` : `<span class="meta">The download will be here shortly.</span>`}</div>
 </div></div>
 </section>
 <div class="wrap wallwrap"><main>
@@ -217,17 +217,17 @@ async function load() {
   $("note").value = data.note.text; sync();
   $("noteWhen").textContent = data.note.updated ? "Last published " + when(data.note.updated) : "No note published yet.";
   const t = data.totals;
-  const tiles = [["Installs sharing usage", t.installs], ["Active in 7 days", t.active7], ["Active in 30 days", t.active30], ["Check-ins today (everyone)", t.checksToday], ["Downloads", t.downloads], ["Different downloaders", t.downloaders]];
+  const tiles = [["Installs sharing usage", t.installs], ["Active in 7 days", t.active7], ["Active in 30 days", t.active30], ["Check-ins today (everyone)", t.checksToday], ["Downloads by people", t.downloads], ["Different people", t.downloaders], ["App self-updates", t.dlApp], ["AI crawler fetches", t.dlAi], ["Search engine fetches", t.dlSearch], ["Other bot fetches", t.dlBot]];
   $("tiles").replaceChildren(...tiles.map(([k, v]) => { const d = document.createElement("div"); d.className = "tile"; const b = document.createElement("b"); b.textContent = v ?? 0; const s = document.createElement("span"); s.textContent = k; d.append(b, s); return d; }));
   $("relInfo").textContent = data.release ? "Published version: " + data.release.version + " (" + (data.release.size / 1048576).toFixed(1) + " MB)" : "No release published yet.";
   table($("daily"), [["Day", "day"], ["All check-ins", "checks", 1], ["Sharing usage", "known", 1]], data.daily);
-  table($("dlDaily"), [["Day", "day"], ["Downloads", "n", 1]], data.dlDaily);
+  table($("dlDaily"), [["Day", "day"], ["People", "people", 1], ["App updates", "app", 1], ["AI crawlers", "ai", 1], ["Other bots", "bots", 1]], data.dlDaily);
   table($("versions"), [["Version", "version"], ["Installs", "n", 1]], data.versions);
   table($("countries"), [["Country", "country"], ["Installs", "n", 1]], data.countries);
   table($("modes"), [["Feature", "kind"], ["Times", "n", 1], ["People", "people", 1]], data.modes);
   table($("quality"), [["Quality", "q"], ["People", "people", 1]], data.quality);
   table($("gpus"), [["Graphics card", "gpu"], ["Installs", "n", 1]], data.gpus);
-  table($("downloads"), [["When", (r) => when(r.ts)], ["Version", "version"], ["Country", "country"], ["City", "city"], ["Visitor", "visitor"], ["Came from", "ref"], ["Browser", "ua"]], data.downloads);
+  table($("downloads"), [["When", (r) => when(r.ts)], ["Who", (r) => ({ person: "Person", app: "App update", ai: "AI crawler", search: "Search engine", bot: "Bot" }[r.kind] || r.kind)], ["Version", "version"], ["Country", "country"], ["City", "city"], ["Network", "org"], ["Visitor", "visitor"], ["Came from", "ref"], ["Browser", "ua"]], data.downloads);
   table($("recent"), [["Install", (r) => r.id.slice(0, 8)], ["Last seen", (r) => when(r.last_seen)], ["First seen", (r) => when(r.first_seen)], ["Version", "version"], ["Country", "country"], ["Windows", "os"], ["Graphics card", "gpu"], ["Screens", "screens"], ["Check-ins", "pings", 1]], data.recent);
 }
 function sync() { $("count").textContent = $("note").value.length; $("preview").textContent = $("note").value || "(nothing shown)"; }

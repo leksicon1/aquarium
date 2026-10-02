@@ -67,6 +67,19 @@ async function event(req, env) {
 }
 
 // ---------------------------------------------------------------- download
+// Who fetched the installer: the app updating itself, an AI crawler, a search engine, some other
+// automated client (named bots, scripts, or a browser coming from a hosting company), or a person.
+const AI_BOTS = /claudebot|claude-user|claude-searchbot|anthropic|gptbot|chatgpt|oai-searchbot|perplexity|ccbot|bytespider|google-extended|meta-externalagent|amazonbot|applebot-extended|cohere|diffbot|youbot|mistralai/i;
+const SEARCH_BOTS = /googlebot|bingbot|duckduckbot|yandex|baiduspider|slurp|applebot|google-inspectiontool|google-safety/i;
+const OTHER_BOTS = /bot\b|crawler|spider|headless|curl\/|wget|python|go-http|java\/|okhttp|axios|node-fetch|scrapy|phantom|facebookexternalhit|preview|monitor|scan/i;
+const HOSTING = /google|amazon|aws|microsoft|azure|ovh|digitalocean|hetzner|linode|akamai|vultr|oracle|alibaba|tencent|contabo|leaseweb|scaleway|cloudflare|datacamp|m247|hosting|datacenter|data center|server|cloud|vpn|colo/i;
+function downloadKind(ua, org) {
+  if (/updater$/i.test(ua)) return "app";
+  if (AI_BOTS.test(ua)) return "ai";
+  if (SEARCH_BOTS.test(ua)) return "search";
+  if (!ua || OTHER_BOTS.test(ua) || HOSTING.test(org)) return "bot";
+  return "person";
+}
 async function download(req, env, origin) {
   const rel = await release(env, origin);
   if (!rel) return new Response("No release published yet.", { status: 404 });
@@ -75,8 +88,9 @@ async function download(req, env, origin) {
   const visitor = (await sha256(ip + "|" + day().slice(0, 7) + "|" + ((await kvGet(env, "salt")) || "reef"))).slice(0, 16);
   if (req.method === "GET" && !req.headers.get("range")) {
     try {
-      await env.DB.prepare("INSERT INTO downloads(ts,day,version,country,city,ua,ref,visitor) VALUES(?,?,?,?,?,?,?,?)")
-        .bind(now(), day(), rel.version, req.cf?.country || "", clip(req.cf?.city, 60), clip(req.headers.get("user-agent"), 200), clip(req.headers.get("referer"), 200), visitor).run();
+      const ua = req.headers.get("user-agent") || "", org = req.cf?.asOrganization || "";
+      await env.DB.prepare("INSERT INTO downloads(ts,day,version,country,city,ua,ref,visitor,kind,org) VALUES(?,?,?,?,?,?,?,?,?,?)")
+        .bind(now(), day(), rel.version, req.cf?.country || "", clip(req.cf?.city, 60), clip(ua, 200), clip(req.headers.get("referer"), 200), visitor, downloadKind(ua, org), clip(org, 80)).run();
     } catch (e) { console.log("download db", e.message); }
   }
   const headers = {
@@ -180,21 +194,49 @@ async function admin(req, env, url) {
                 (SELECT COUNT(*) FROM installs WHERE last_seen >= ?) active7,
                 (SELECT COUNT(*) FROM installs WHERE last_seen >= ?) active30,
                 (SELECT COALESCE(SUM(n),0) FROM checks WHERE day = ?) checksToday,
-                (SELECT COUNT(*) FROM downloads) downloads,
-                (SELECT COUNT(DISTINCT visitor) FROM downloads) downloaders`, d7, d30, day()),
+                (SELECT COUNT(*) FROM downloads WHERE kind = 'person') downloads,
+                (SELECT COUNT(DISTINCT visitor) FROM downloads WHERE kind = 'person') downloaders,
+                (SELECT COUNT(*) FROM downloads WHERE kind = 'app') dlApp,
+                (SELECT COUNT(*) FROM downloads WHERE kind = 'ai') dlAi,
+                (SELECT COUNT(*) FROM downloads WHERE kind = 'search') dlSearch,
+                (SELECT COUNT(*) FROM downloads WHERE kind = 'bot') dlBot`, d7, d30, day()),
       q("SELECT c.day, SUM(c.n) checks, (SELECT COUNT(DISTINCT id) FROM events e WHERE e.day = c.day) known FROM checks c WHERE c.day >= ? GROUP BY c.day ORDER BY c.day DESC", d30),
       q("SELECT version, COUNT(*) n FROM installs GROUP BY version ORDER BY n DESC LIMIT 12"),
       q("SELECT country, COUNT(*) n FROM installs GROUP BY country ORDER BY n DESC LIMIT 15"),
       q("SELECT gpu, COUNT(*) n FROM installs GROUP BY gpu ORDER BY n DESC LIMIT 12"),
       q("SELECT kind, COUNT(*) n, COUNT(DISTINCT id) people FROM events WHERE day >= ? GROUP BY kind ORDER BY n DESC LIMIT 12", d30),
       q("SELECT json_extract(data,'$.q') q, COUNT(DISTINCT id) people FROM events WHERE day >= ? AND json_extract(data,'$.q') IS NOT NULL GROUP BY q ORDER BY q", d30),
-      q("SELECT ts, version, country, city, ua, ref, visitor FROM downloads ORDER BY ts DESC LIMIT 40"),
-      q("SELECT day, COUNT(*) n FROM downloads WHERE day >= ? GROUP BY day ORDER BY day DESC", d30),
+      q("SELECT ts, kind, version, country, city, org, ua, ref, visitor FROM downloads ORDER BY ts DESC LIMIT 60"),
+      q("SELECT day, SUM(kind='person') people, SUM(kind='app') app, SUM(kind='ai') ai, SUM(kind IN ('search','bot')) bots FROM downloads WHERE day >= ? GROUP BY day ORDER BY day DESC", d30),
       q("SELECT id, first_seen, last_seen, version, country, os, gpu, screens, pings FROM installs ORDER BY last_seen DESC LIMIT 40"),
     ]);
     return json({ totals: totals[0], daily, versions, countries, gpus, modes, quality, downloads: dls, dlDaily, recent, note: await note(env), release: await release(env, url.origin) });
   }
   return json({ error: "Not found" }, 404);
+}
+
+// Video files answer byte-range requests (206), which iPhones and iPads require before they will play a video.
+async function video(req, env) {
+  const r = await env.ASSETS.fetch(new Request(req.url, { method: "GET" }));
+  if (!r.ok) return r;
+  const head = { "content-type": "video/mp4", "accept-ranges": "bytes", "cache-control": "public, max-age=86400" };
+  const range = /^bytes=(\d*)-(\d*)$/.exec(req.headers.get("range") || "");
+  if (!range) {
+    const size = r.headers.get("content-length");
+    if (size) head["content-length"] = size;
+    return new Response(req.method === "HEAD" ? null : r.body, { headers: head });
+  }
+  const buf = await r.arrayBuffer();
+  const size = buf.byteLength;
+  let start = range[1] === "" ? Math.max(0, size - parseInt(range[2] || "0", 10)) : parseInt(range[1], 10);
+  let end = range[1] === "" || range[2] === "" ? size - 1 : Math.min(parseInt(range[2], 10), size - 1);
+  if (!(start >= 0) || start > end || start >= size) {
+    return new Response(null, { status: 416, headers: { "content-range": `bytes */${size}` } });
+  }
+  return new Response(buf.slice(start, end + 1), {
+    status: 206,
+    headers: { ...head, "content-range": `bytes ${start}-${end}/${size}`, "content-length": String(end - start + 1) },
+  });
 }
 
 export default {
@@ -211,6 +253,7 @@ export default {
       if (p === "/" || p === "/index.html") {
         return new Response(page(await release(env, url.origin)), { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=300" } });
       }
+      if (p.endsWith(".mp4")) return await video(req, env);
       return env.ASSETS.fetch(req);
     } catch (e) {
       console.log("error", p, e.stack || e.message);
