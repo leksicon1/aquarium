@@ -42,6 +42,9 @@ public sealed class ReefSettings
 
 	public bool MarineSnow { get; set; } = true;
 
+	/// <summary>An octopus lives in the reef's cave.</summary>
+	public bool Octopus { get; set; } = true;
+
 
 	public bool SurfaceVisible { get; set; } = true;
 
@@ -125,6 +128,9 @@ public sealed class ReefSettings
 	public int Antialiasing { get; set; }
 
 	/// <summary>Very slow, subtle drifting camera.</summary>
+	/// <summary>Fixed view, or a camera that follows the octopus or a fish, tours the reef, or mixes them.</summary>
+	public CameraMode Camera { get; set; }
+
 	public bool CameraDrift { get; set; }
 
 	public float CameraDriftAmount { get; set; } = 0.5f;
@@ -141,11 +147,20 @@ public sealed class ReefSettings
 	public EffectQuality LightShafts { get; set; }
 	public EffectQuality Bloom { get; set; }
 
+	/// <summary>Sand dust: silt drifting over the sea floor and puffs kicked up by fish. Follows the quality level unless set.</summary>
+	public EffectQuality SandDust { get; set; }
+
+	/// <summary>Little clouds of sand kicked up by fish near the bottom (Off unless switched on).</summary>
+	public EffectQuality SandPuffs { get; set; }
+
 	public int BezelPixels { get; set; }
 
 	public Projection Projection { get; set; }
 
 	public float CurveDegrees { get; set; } = 25f;
+
+	/// <summary>Wide view (flat layouts): 0 = a plain flat camera picture, 1 = the strongest wide-angle look.</summary>
+	public float WideView { get; set; } = 0.6f;
 
 
 	public int FpsCap { get; set; }
@@ -271,8 +286,12 @@ public sealed class ReefSettings
 		if (!Enum.IsDefined(Shadows)) Shadows = EffectQuality.Preset;
 		if (!Enum.IsDefined(LightShafts)) LightShafts = EffectQuality.Preset;
 		if (!Enum.IsDefined(Bloom)) Bloom = EffectQuality.Preset;
+		if (!Enum.IsDefined(SandDust)) SandDust = EffectQuality.Preset;
+		if (!Enum.IsDefined(SandPuffs)) SandPuffs = EffectQuality.Preset;
+		if (!Enum.IsDefined(Camera)) Camera = CameraMode.Fixed;
 		BezelPixels = Math.Clamp(BezelPixels, 0, 400);
 		CurveDegrees = Math.Clamp(CurveDegrees, 0f, 60f);
+		WideView = Math.Clamp(WideView, 0f, 1f);
 		FieldOfView = Math.Clamp(FieldOfView, 0.7f, 1.4f);
 		WallpaperFps = WallpaperFps <= 0 ? 0 : Math.Clamp(WallpaperFps, 10, 400);   // 0 = match the display
 		FpsCap = Math.Clamp(FpsCap, 0, 240);

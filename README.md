@@ -8,15 +8,21 @@ One aquarium across all your screens. Ultra Aquarium is a free 3D aquarium for W
 
 ## Download
 
-**[UltraAquarium-7.0.3.msi](download/UltraAquarium-7.0.3.msi)** (12.6 MB, Windows 10 or 11, 64-bit)
+**[UltraAquarium-7.25.0.msi](download/UltraAquarium-7.25.0.msi)** (16.5 MB, Windows 10 or 11, 64-bit)
 
 The same file is at [aquarium.technology83.com](https://aquarium.technology83.com). Run it and the app opens when it finishes. If Windows asks for the .NET 8 Desktop Runtime, say yes: it is a free Microsoft component that many apps share.
 
 To check your download, compare its SHA-256 with the one in [RELEASES.md](RELEASES.md):
 
 ```powershell
-Get-FileHash .\UltraAquarium-7.0.3.msi -Algorithm SHA256
+Get-FileHash .\UltraAquarium-7.25.0.msi -Algorithm SHA256
 ```
+
+The previous version, [7.0.3](download/UltraAquarium-7.0.3.msi), is still available. The app tells you when a new version is out but only updates when you click Update. To go back to an older version, uninstall Ultra Aquarium first, then run the older installer; your settings are kept.
+
+## New in 7.25
+
+An octopus with its own den, mouths that open and close, eyes that look around, fluttering front fins, a rebuilt sea turtle and shark, a blue-spotted stingray, starfish, feather-duster worms, a cleaning station, new camera modes and a wide view for several monitors. The full list is in [RELEASES.md](RELEASES.md).
 
 ## What it does
 

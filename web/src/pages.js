@@ -13,6 +13,7 @@ button:focus-visible,.btn:focus-visible,textarea:focus-visible,input:focus-visib
 export function page(rel) {
   const v = rel ? esc(rel.version) : "";
   const mb = rel ? Math.round(rel.size / 1048576) : "";
+  const prev = (rel && rel.previous) || [];
   const media = `<img class="media" src="/hero.jpg" loading="lazy" alt="A coral reef full of fish, shown running across three monitors">`;
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Ultra Aquarium: one aquarium across all your screens</title>
@@ -84,6 +85,23 @@ footer{color:var(--mute);font-size:13.5px;padding:34px 0 40px}
 .wallwrap{padding-top:34px}
 .hero .meta{color:#c4d8f0}
 @media (max-width:820px){header.top{padding:8px 26px 14px;gap:8px}header.top img{width:26px;height:26px}.name{font-size:11px}.name small{font-size:9.5px}}
+.new{border-top:1px solid var(--line);padding:44px 0 10px}
+.new>h2,.gal>h2,.older>h2{font-family:Michroma,"Segoe UI",sans-serif;font-weight:400;font-size:clamp(20px,2.6vw,28px);margin:0 0 8px}
+.new>p.sub{color:var(--mute);margin:0 0 26px}
+.new ol{list-style:none;counter-reset:n;padding:0;margin:0 0 30px;display:grid;grid-template-columns:repeat(2,1fr);gap:20px 40px}
+.new li{counter-increment:n;position:relative;padding-left:46px}
+.new li::before{content:counter(n);position:absolute;left:0;top:2px;width:32px;height:32px;border-radius:50%;background:var(--deep);border:1px solid var(--line);color:var(--electric);font:700 14px/32px Manrope,sans-serif;text-align:center}
+.new h3{font-size:17px;color:#fff;margin:0 0 2px}
+.new li p{margin:0;color:#a9c2e0;font-size:15.5px}
+@media (max-width:760px){.new ol{grid-template-columns:1fr}}
+.gal{padding:20px 0 40px}
+.gal>p{color:var(--mute);margin:0 0 18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px}
+.grid img{width:100%;height:auto;display:block;border-radius:6px;transition:opacity .15s}
+.grid a:hover img{opacity:.85}
+.wide{margin-top:8px}.wide img{width:100%;height:auto;display:block;border-radius:6px}
+.older{border-top:1px solid var(--line);padding:34px 0 10px;color:#a9c2e0;font-size:15.5px}
+.older p{margin:0 0 10px;max-width:46em}
 </style></head><body>
 <section class="hero">
 <header class="top"><img src="/icon.png" alt=""><div class="name">Ultra Aquarium<small>by Technology 83</small></div></header>
@@ -91,12 +109,60 @@ footer{color:var(--mute);font-size:13.5px;padding:34px 0 40px}
 <div class="shade"></div>
 <div class="say"><div class="wrap">
 <h1>One aquarium across all your screens.</h1>
-<div class="get">${rel ? `<a class="btn" href="/download" rel="nofollow">Download for Windows</a><span class="meta">Free. Version ${v}, ${mb} MB. Windows 10 or 11, 64-bit.</span>` : `<span class="meta">The download will be here shortly.</span>`}</div>
+<div class="get">${rel ? `<a class="btn" href="/download" rel="nofollow">Download for Windows</a><span class="meta">Free. Version ${v}, ${mb} MB. Windows 10 or 11, 64-bit. <a href="#new">What's new</a></span>` : `<span class="meta">The download will be here shortly.</span>`}</div>
 </div></div>
 </section>
 <div class="wrap wallwrap"><main>
 <p class="lead">Ultra Aquarium is a free 3D aquarium for Windows. It runs as your screensaver or as live wallpaper, and it treats two, three or four monitors as a single tank, so a shark can cross from one screen to the next. The video above is the app itself, recorded at 60 frames a second.</p>
 
+<section class="new" id="new">
+<h2>What's new in ${v}</h2>
+<p class="sub">The biggest update yet. Twenty things to look for:</p>
+<ol>
+<li><h3>An octopus lives on the reef</h3><p>It has a den in the rocks, crawls over sand and stone on eight arms, darts off in short jets and changes colour to match where it is.</p></li>
+<li><h3>Mouths that work</h3><p>Each fish's jaw is modelled from its own shape. Mouths open and close as fish breathe, gape and bite.</p></li>
+<li><h3>Real eyes that look around</h3><p>Every fish has a glossy eyeball that flicks about and follows food, passing fish, and you.</p></li>
+<li><h3>Fluttering front fins</h3><p>The small pectoral fins beat on every fish, the way they do on real ones.</p></li>
+<li><h3>A rebuilt sea turtle</h3><p>A sculpted shell with all its plates, a proper neck, a beak that opens, and new eyes.</p></li>
+<li><h3>A rebuilt shark</h3><p>Teeth, a third eyelid, wing-like side fins and a real swimming motion. It comes up to the surface on about half its visits.</p></li>
+<li><h3>Blue-spotted stingray</h3><p>A new resident that glides low over the sand and settles.</p></li>
+<li><h3>Manta wings that curl</h3><p>The wing tips bend and curl as the manta flies.</p></li>
+<li><h3>A slower, gentler whale</h3><p>It cruises just under the surface, clear of the reef.</p></li>
+<li><h3>Visitors from the blue</h3><p>The turtle, shark, manta and whale swim in out of the distance and away into it.</p></li>
+<li><h3>Better feeding</h3><p>Food in natural colours that sinks, glints in the light, and crumbles when a fish bites.</p></li>
+<li><h3>Starfish</h3><p>They creep slowly across the open sand.</p></li>
+<li><h3>Feather-duster worms</h3><p>They snap shut when a fish comes close and slowly open again.</p></li>
+<li><h3>More corals, now in 3D</h3><p>Mushroom corals, feather dusters and two new anemones. Bushes and branching corals are now round, not flat.</p></li>
+<li><h3>A living reef</h3><p>Corals slowly breathe, and grass and soft corals bend aside as fish brush past.</p></li>
+<li><h3>A cleaning station</h3><p>Small wrasse wait on a rock and groom the bigger fish that stop by.</p></li>
+<li><h3>New camera modes</h3><p>Follow the octopus, follow one fish after another, take a slow tour of the caves and arches, or mix wide views with close-ups.</p></li>
+<li><h3>Rocks that sit in the sand</h3><p>Sand banks up against every rock, with drifts of coarse shell sand, and the rocks look better on the lowest quality levels.</p></li>
+<li><h3>Wide view</h3><p>A new setting that shows the whole scene across two or three monitors instead of a thin strip.</p></li>
+<li><h3>Smoother on laptops</h3><p>High-refresh laptop screens are no longer held to 60 fps, and you can pick the graphics card by name.</p></li>
+</ol>
+</section>
+<section class="gal" id="pictures">
+<h2>Pictures</h2>
+<p>Straight from the app at the highest quality setting. Click any picture for the full size.</p>
+<div class="grid">
+<a href="/shots/reef.jpg" target="_blank" rel="noopener"><img src="/shots/reef-t.jpg" loading="lazy" width="480" height="270" alt="The reef at midday"></a>
+<a href="/shots/octopus.jpg" target="_blank" rel="noopener"><img src="/shots/octopus-t.jpg" loading="lazy" width="480" height="270" alt="The octopus crossing the sand"></a>
+<a href="/shots/turtle.jpg" target="_blank" rel="noopener"><img src="/shots/turtle-t.jpg" loading="lazy" width="480" height="270" alt="The rebuilt sea turtle"></a>
+<a href="/shots/shark-pass.jpg" target="_blank" rel="noopener"><img src="/shots/shark-pass-t.jpg" loading="lazy" width="480" height="270" alt="The shark passing close"></a>
+<a href="/shots/shark-closeup.jpg" target="_blank" rel="noopener"><img src="/shots/shark-closeup-t.jpg" loading="lazy" width="480" height="270" alt="The shark's teeth"></a>
+<a href="/shots/manta.jpg" target="_blank" rel="noopener"><img src="/shots/manta-t.jpg" loading="lazy" width="480" height="270" alt="A manta ray over the reef"></a>
+<a href="/shots/stingray.jpg" target="_blank" rel="noopener"><img src="/shots/stingray-t.jpg" loading="lazy" width="480" height="270" alt="A blue-spotted stingray"></a>
+<a href="/shots/parrotfish.jpg" target="_blank" rel="noopener"><img src="/shots/parrotfish-t.jpg" loading="lazy" width="480" height="270" alt="A parrotfish up close"></a>
+<a href="/shots/clownfish.jpg" target="_blank" rel="noopener"><img src="/shots/clownfish-t.jpg" loading="lazy" width="480" height="270" alt="A clownfish by its anemone"></a>
+<a href="/shots/lionfish.jpg" target="_blank" rel="noopener"><img src="/shots/lionfish-t.jpg" loading="lazy" width="480" height="270" alt="A lionfish in the shade of a rock"></a>
+<a href="/shots/triggerfish.jpg" target="_blank" rel="noopener"><img src="/shots/triggerfish-t.jpg" loading="lazy" width="480" height="270" alt="A triggerfish"></a>
+<a href="/shots/emperor.jpg" target="_blank" rel="noopener"><img src="/shots/emperor-t.jpg" loading="lazy" width="480" height="270" alt="An emperor angelfish"></a>
+<a href="/shots/gramma.jpg" target="_blank" rel="noopener"><img src="/shots/gramma-t.jpg" loading="lazy" width="480" height="270" alt="A royal gramma"></a>
+<a href="/shots/feeding.jpg" target="_blank" rel="noopener"><img src="/shots/feeding-t.jpg" loading="lazy" width="480" height="270" alt="Fish coming up for food"></a>
+<a href="/shots/dusk.jpg" target="_blank" rel="noopener"><img src="/shots/dusk-t.jpg" loading="lazy" width="480" height="270" alt="The reef at dusk"></a>
+<a href="/shots/night.jpg" target="_blank" rel="noopener"><img src="/shots/night-t.jpg" loading="lazy" width="480" height="270" alt="The reef at night"></a>
+</div>
+</section>
 <div class="wall">${media}<i></i><i></i><b></b></div>
 <div class="feet"><span></span><span></span><span></span></div>
 <div class="points">
@@ -116,6 +182,12 @@ footer{color:var(--mute);font-size:13.5px;padding:34px 0 40px}
 <div class="f"><div class="pair"><img src="/f-settings.jpg" loading="lazy" alt="The My Fish page in settings, with sliders for a fish called Sunset Tang"><img src="/f-myfish.jpg" loading="lazy" width="1120" height="630" alt="Custom striped fish swimming with the others"></div><div><h3>Design your own fish</h3><p>Name a fish, set its length, body shape, colours and pattern, and decide how many there are and whether they school or glow at night. They join the reef beside the built-in species.</p></div></div>
 <div class="f"><img src="/f-clock.jpg" loading="lazy" width="1120" height="630" alt="The aquarium with a small clock in the top corner"><div><h3>A clock and your own words</h3><p>Put a clock in a corner, in the font and size you like. You can also give the tank a line of text: written in the sand, or spelled out by a school of fish that gathers into the letters and drifts apart again.</p></div></div>
 <div class="f"><img src="/f-turtle.jpg" loading="lazy" width="1120" height="630" alt="A sea turtle swimming above the reef"><div><h3>Screensaver, wallpaper, or both</h3><p>Run it as the Windows screensaver, as live wallpaper behind your icons, or full screen whenever you want to watch. Ten quality levels go from integrated graphics up to a gaming card, and an optional readout shows the frame rate.</p></div></div>
+</section>
+<section class="older" id="older">
+<h2>Older versions</h2>
+<p>When a new version is out, the app shows it on its Home page and only updates if you click Update. You can stay on the version you have for as long as you like.</p>
+${prev.length ? `<p>To go back to an earlier version, uninstall Ultra Aquarium first (Windows Settings, Apps), then run the older installer. Your settings are stored separately and are kept.</p>
+<p>${prev.map((p) => `<a href="/download/${esc(p.version)}" rel="nofollow">Version ${esc(p.version)}</a> (${Math.round(p.size / 1048576)} MB)`).join(" · ")}</p>` : ""}
 </section>
 </main>
 <footer>© 2026 Technology 83 Systems Ltd. · <a href="https://github.com/leksicon1/aquarium">Source and release history on GitHub</a></footer>

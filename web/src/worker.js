@@ -1,6 +1,7 @@
 // Ultra Aquarium service for aquarium.technology83.com (reef.technology83.com is kept for older builds)
 //   /                 download page
-//   /download         the installer zip (stored as parts under /dl, streamed as one file, each download logged)
+//   /download         the latest installer (stored as parts under /dl, streamed as one file, each download logged)
+//   /download/<ver>   an older installer listed under "previous" in release.json (same streaming and logging)
 //   /api/hello        the app's check-in: returns the latest version and the developer note; records usage
 //   /api/event        usage events (only sent when the user has usage sharing on)
 //   /admin            developer area: edit the note, see who downloaded and how the app is used
@@ -80,9 +81,13 @@ function downloadKind(ua, org) {
   if (!ua || OTHER_BOTS.test(ua) || HOSTING.test(org)) return "bot";
   return "person";
 }
-async function download(req, env, origin) {
-  const rel = await release(env, origin);
+async function download(req, env, origin, want) {
+  let rel = await release(env, origin);
   if (!rel) return new Response("No release published yet.", { status: 404 });
+  if (want && want !== rel.version) {
+    rel = (rel.previous || []).find((p) => p.version === want);
+    if (!rel) return new Response("That version is not available.", { status: 404 });
+  }
   const ip = req.headers.get("cf-connecting-ip") || "";
   // a visitor code that changes every month and cannot be turned back into an address
   const visitor = (await sha256(ip + "|" + day().slice(0, 7) + "|" + ((await kvGet(env, "salt")) || "reef"))).slice(0, 16);
@@ -252,6 +257,8 @@ export default {
       if (p === "/api/event" && req.method === "POST") return await event(req, env);
       if (p === "/api/release") return json({ latest: await release(env, url.origin), note: await note(env) });
       if (p === "/download") return await download(req, env, url.origin);
+      const old = /^\/download\/(\d+(?:\.\d+){1,3})$/.exec(p);
+      if (old) return await download(req, env, url.origin, old[1]);
       if (p.startsWith("/admin")) return await admin(req, env, url);
       if (p.startsWith("/dl/")) return new Response("Use /download", { status: 404 });   // parts are not served on their own
       if (p === "/" || p === "/index.html") {
