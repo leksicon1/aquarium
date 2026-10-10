@@ -27,7 +27,7 @@ export function page(rel) {
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Ultra Aquarium","applicationCategory":"MultimediaApplication","operatingSystem":"Windows 10, Windows 11","description":"A free 3D aquarium screensaver and live wallpaper for Windows that runs as one tank across multiple monitors.","url":"https://aquarium.technology83.com/","image":"https://aquarium.technology83.com/og.jpg","softwareVersion":"${v}","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"Technology 83 Systems Ltd."}}</script>
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Michroma&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Michroma&family=Bangers&display=swap" rel="stylesheet">
 <style>
 :root{--abyss:#050b18;--deep:#0a1830;--line:#16305a;--electric:#1fa3ff;--ice:#d9ecff;--mute:#8aa6c8;--koi:#ff8a2a}
 *{box-sizing:border-box}
@@ -35,6 +35,31 @@ html{background:var(--abyss)}
 body{margin:0;color:var(--ice);font:17px/1.6 Manrope,"Segoe UI",system-ui,sans-serif}
 a{color:var(--electric)}
 .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+/* Octopus Boy: a 90s comic splash */
+.ob{position:relative;margin:46px 0 10px;padding:46px 34px 40px;border:4px solid #000;border-radius:6px;overflow:hidden;color:#111;
+background:radial-gradient(circle,rgba(255,255,255,.22) 1.6px,transparent 1.8px) 0 0/12px 12px,linear-gradient(135deg,#ff2e88 0%,#ff7a1a 45%,#ffd23a 100%);box-shadow:10px 10px 0 #000}
+.ob::before{content:"";position:absolute;inset:0;background:repeating-conic-gradient(from 0deg at 18% 30%,rgba(255,255,255,.13) 0 6deg,transparent 6deg 18deg);pointer-events:none}
+.ob>*{position:relative}
+.ob .burst{position:absolute;top:18px;right:22px;width:150px;height:150px;transform:rotate(12deg);z-index:2}
+.ob .burst svg{width:100%;height:100%;display:block;filter:drop-shadow(4px 4px 0 #000)}
+.ob .kicker{font:28px/1 Bangers,Impact,sans-serif;letter-spacing:.06em;color:#fff;-webkit-text-stroke:1.5px #000;text-shadow:3px 3px 0 #000;margin:0 0 6px;transform:rotate(-2deg);display:inline-block}
+.ob h2{font:clamp(54px,9vw,112px)/.9 Bangers,Impact,sans-serif;letter-spacing:.03em;margin:0 0 18px;color:#2ef2ff;-webkit-text-stroke:3px #000;text-shadow:6px 6px 0 #000,10px 10px 0 #ff2e88;transform:rotate(-3deg);transform-origin:left}
+.ob .story{max-width:40em;background:#fffbe6;border:3px solid #000;box-shadow:5px 5px 0 #000;padding:14px 18px;font:600 16.5px/1.55 Manrope,sans-serif;margin:0 0 26px}
+.ob .panels{display:grid;grid-template-columns:1.6fr 1fr 1fr;grid-auto-rows:auto;gap:16px}
+.ob .p{position:relative;background:#000;border:4px solid #000;box-shadow:6px 6px 0 #000;margin:0}
+.ob .p:nth-child(2){transform:rotate(1.2deg)}.ob .p:nth-child(3){transform:rotate(-1.4deg)}.ob .p:nth-child(4){transform:rotate(-.8deg)}.ob .p:nth-child(5){transform:rotate(1deg)}
+.ob .p.big{grid-row:span 2}
+.ob .p video,.ob .p img{display:block;width:100%;height:100%;object-fit:cover}
+.ob .p.big video{aspect-ratio:auto}
+.ob .p figcaption{position:absolute;left:-6px;top:-10px;background:#ffe93a;border:3px solid #000;padding:3px 10px;font:19px/1.15 Bangers,Impact,sans-serif;letter-spacing:.04em;color:#000;max-width:85%;transform:rotate(-2deg)}
+.ob .p.big figcaption{font-size:24px}
+.ob .tip{margin:26px 0 0;font:700 15.5px Manrope,sans-serif;color:#111}
+.ob .tip b{background:#000;color:#ffe93a;padding:2px 8px;font-family:Bangers,Impact,sans-serif;font-weight:400;letter-spacing:.06em;font-size:18px}
+@media (max-width:820px){.ob{padding:84px 16px 26px;box-shadow:6px 6px 0 #000}.ob .burst{width:84px;height:84px;top:8px;right:10px}.ob h2{font-size:clamp(46px,13vw,64px)}.ob .p figcaption{position:static;display:block;max-width:none;transform:none;font-size:15px;border-width:0 0 3px;margin:0;left:auto;top:auto}.ob .p.big figcaption{font-size:18px}.ob .p{display:flex;flex-direction:column-reverse}.ob .panels{grid-template-columns:1fr 1fr}.ob .p.big{grid-column:1/-1;grid-row:auto}.ob h2{-webkit-text-stroke:2px #000;text-shadow:4px 4px 0 #000,7px 7px 0 #ff2e88}}
+@media (prefers-reduced-motion:reduce){.ob .p{transform:none!important}}
+.f video{width:100%;height:auto;border-radius:8px;display:block;aspect-ratio:16/9;background:#0a1830}
+.f:nth-of-type(even) video{order:2}
+@media (max-width:760px){.f:nth-of-type(even) video{order:0}}
 /* the video is the app itself, recorded at 60 frames a second, shown whole with only a soft shade behind the headline */
 .hero{position:relative;background:var(--abyss)}
 .hero video{display:block;width:100%;aspect-ratio:16/9;max-height:100vh;object-fit:contain;background:var(--abyss)}
@@ -105,7 +130,7 @@ footer{color:var(--mute);font-size:13.5px;padding:34px 0 40px}
 </style></head><body>
 <section class="hero">
 <header class="top"><img src="/icon.png" alt=""><div class="name">Ultra Aquarium<small>by Technology 83</small></div></header>
-<video id="bg" muted loop playsinline preload="none" poster="/hero-poster.jpg" aria-label="Ultra Aquarium running, recorded at 60 frames per second"></video>
+<video id="bg" muted loop playsinline preload="none" poster="/hero-poster.jpg" aria-label="Ultra Aquarium running: the reef, a sea turtle, a shark and Octopus Boy"></video>
 <div class="shade"></div>
 <div class="say"><div class="wrap">
 <h1>One aquarium across all your screens.</h1>
@@ -113,8 +138,22 @@ footer{color:var(--mute);font-size:13.5px;padding:34px 0 40px}
 </div></div>
 </section>
 <div class="wrap wallwrap"><main>
-<p class="lead">Ultra Aquarium is a free 3D aquarium for Windows. It runs as your screensaver or as live wallpaper, and it treats two, three or four monitors as a single tank, so a shark can cross from one screen to the next. The video above is the app itself, recorded at 60 frames a second.</p>
+<p class="lead">Ultra Aquarium is a free 3D aquarium for Windows. It runs as your screensaver or as live wallpaper, and it treats two, three or four monitors as a single tank, so a shark can cross from one screen to the next. The video above is the app itself, rendered at 60 frames a second.</p>
 
+<section class="ob" id="octopus-boy" aria-labelledby="ob-title">
+<div class="burst"><svg viewBox="0 0 100 100" aria-hidden="true"><polygon fill="#ffe93a" stroke="#000" stroke-width="3" points="50,2 58,24 80,10 73,34 98,34 78,50 98,66 73,66 80,90 58,76 50,98 42,76 20,90 27,66 2,66 22,50 2,34 27,34 20,10 42,24"/><text x="50" y="47" text-anchor="middle" font-family="Bangers,Impact,sans-serif" font-size="22" fill="#ff2e88" stroke="#000" stroke-width="1">NEW</text><text x="50" y="66" text-anchor="middle" font-family="Bangers,Impact,sans-serif" font-size="13" fill="#000">IN 7.25!</text></svg></div>
+<p class="kicker">Introducing&hellip;</p>
+<h2 id="ob-title">Octopus Boy!</h2>
+<p class="story">Nobody invited him. One day there was simply an octopus living under the big rock. Octopus Boy spends his days crawling the sand on eight arms, feeling his way with his suckers and taking his time. He turns sandy on the sand and rocky on the rock. When something startles him he shoots off in a quick jet and lands somewhere new, and when he has seen enough he heads home to his den. At night he stays out longer.</p>
+<div class="panels">
+<figure class="p big"><video class="clip" muted loop playsinline preload="none" poster="/clip-octopus.jpg" data-src="/clip-octopus.mp4" aria-label="Octopus Boy crawling across the sand"></video><figcaption>Eight arms. Zero hurry.</figcaption></figure>
+<figure class="p"><img src="/ob-1.jpg" loading="lazy" width="800" height="450" alt="Octopus Boy stretched out on the sand"><figcaption>Feels his way with every sucker</figcaption></figure>
+<figure class="p"><img src="/ob-2.jpg" loading="lazy" width="800" height="450" alt="Octopus Boy close up, eyes up"><figcaption>Always watching</figcaption></figure>
+<figure class="p"><img src="/ob-3.jpg" loading="lazy" width="800" height="450" alt="Octopus Boy coloured like the rock beside him"><figcaption>Sandy on sand, rocky on rock</figcaption></figure>
+<figure class="p"><img src="/ob-4.jpg" loading="lazy" width="800" height="450" alt="Octopus Boy near his den under the big rock"><figcaption>Home sweet den</figcaption></figure>
+</div>
+<p class="tip"><b>Ride along:</b> in Settings, on the Home page under Camera, pick &ldquo;Follow Octopus Boy&rdquo;.</p>
+</section>
 <section class="new" id="new">
 <h2>What's new in ${v}</h2>
 <p class="sub">The biggest update yet. Twenty things to look for:</p>
@@ -176,12 +215,12 @@ footer{color:var(--mute);font-size:13.5px;padding:34px 0 40px}
 </div>
 <section class="feat">
 <h2>What's in the tank</h2>
-<div class="f"><img src="/f-manta.jpg" loading="lazy" width="1120" height="630" alt="A manta ray gliding over the reef"><div><h3>Visitors drop by</h3><p>Every so often something big swims through: a manta ray, a shark, a sea turtle, a whale in the distance, or a bait ball that the reef fish scatter around. You choose which ones can show up and how often. On several monitors they cross from one screen to the next.</p></div></div>
+<div class="f"><video class="clip" muted loop playsinline preload="none" poster="/clip-manta.jpg" data-src="/clip-manta.mp4" width="1280" height="720" aria-label="A manta ray gliding over the reef"></video><div><h3>Visitors drop by</h3><p>Every so often something big swims through: a manta ray, a shark, a sea turtle, a whale in the distance, or a bait ball that the reef fish scatter around. You choose which ones can show up and how often. On several monitors they cross from one screen to the next.</p></div></div>
 <div class="f"><img src="/f-feed.jpg" loading="lazy" width="1120" height="630" alt="Fish gathering at the surface around falling food"><div><h3>Feed the fish</h3><p>Press F and food drops in from the surface. The nearest fish break off and come to eat. Keep pressing and more of them join in. The key is yours to change.</p></div></div>
 <div class="f"><div class="pair"><img src="/f-dusk.jpg" loading="lazy" width="1120" height="630" alt="The reef in warm evening light"><img src="/f-night.jpg" loading="lazy" width="1120" height="630" alt="The reef at night with glowing coral"></div><div><h3>It follows your day</h3><p>The light in the tank tracks the clock on your PC. Mornings are bright, evenings turn warm, and at night the water goes dark and the coral glows. You can also pin it to one time of day.</p></div></div>
 <div class="f"><div class="pair"><img src="/f-settings.jpg" loading="lazy" alt="The My Fish page in settings, with sliders for a fish called Sunset Tang"><img src="/f-myfish.jpg" loading="lazy" width="1120" height="630" alt="Custom striped fish swimming with the others"></div><div><h3>Design your own fish</h3><p>Name a fish, set its length, body shape, colours and pattern, and decide how many there are and whether they school or glow at night. They join the reef beside the built-in species.</p></div></div>
 <div class="f"><img src="/f-clock.jpg" loading="lazy" width="1120" height="630" alt="The aquarium with a small clock in the top corner"><div><h3>A clock and your own words</h3><p>Put a clock in a corner, in the font and size you like. You can also give the tank a line of text: written in the sand, or spelled out by a school of fish that gathers into the letters and drifts apart again.</p></div></div>
-<div class="f"><img src="/f-turtle.jpg" loading="lazy" width="1120" height="630" alt="A sea turtle swimming above the reef"><div><h3>Screensaver, wallpaper, or both</h3><p>Run it as the Windows screensaver, as live wallpaper behind your icons, or full screen whenever you want to watch. Ten quality levels go from integrated graphics up to a gaming card, and an optional readout shows the frame rate.</p></div></div>
+<div class="f"><video class="clip" muted loop playsinline preload="none" poster="/clip-stingray.jpg" data-src="/clip-stingray.mp4" width="1280" height="720" aria-label="A blue-spotted stingray gliding over the sand"></video><div><h3>Screensaver, wallpaper, or both</h3><p>Run it as the Windows screensaver, as live wallpaper behind your icons, or full screen whenever you want to watch. Ten quality levels go from integrated graphics up to a gaming card, and an optional readout shows the frame rate.</p></div></div>
 </section>
 <section class="older" id="older">
 <h2>Older versions</h2>
@@ -193,6 +232,21 @@ ${prev.length ? `<p>To go back to an earlier version, uninstall Ultra Aquarium f
 <footer>© 2026 Technology 83 Systems Ltd. · <a href="https://github.com/leksicon1/aquarium">Source and release history on GitHub</a></footer>
 </div>
 <script>
+// Short clips play only while on screen, and load only when first scrolled near.
+(function () {
+  var c = navigator.connection || {};
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches || c.saveData) return;
+  var vids = [].slice.call(document.querySelectorAll("video.clip"));
+  if (!("IntersectionObserver" in window)) { vids.forEach(function (v) { v.src = v.dataset.src; v.play().catch(function () {}); }); return; }
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) {
+      var v = e.target;
+      if (e.isIntersecting) { if (!v.src) v.src = v.dataset.src; var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+      else if (v.src) v.pause();
+    });
+  }, { rootMargin: "200px 0px" });
+  vids.forEach(function (v) { io.observe(v); });
+})();
 // The backdrop video starts only after the page itself has loaded, in a size that suits the screen.
 // On a slow or data-saving connection, or when the visitor prefers less motion, the still picture stays.
 addEventListener("load", function () {
