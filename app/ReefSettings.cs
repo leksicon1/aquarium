@@ -19,7 +19,7 @@ public sealed class ReefSettings
 	public int Version { get; set; } = 2;
 
 
-	public float FishDensity { get; set; } = 1f;
+	public float FishDensity { get; set; } = 0.2f;
 
 
 	public float SwimSpeed { get; set; } = 1f;
@@ -105,7 +105,10 @@ public sealed class ReefSettings
 	public float RenderScale { get; set; } = 1f;
 
 	/// <summary>Lower the resolution automatically when the frame rate can't be held.</summary>
-	public bool AdaptiveResolution { get; set; }
+	public bool AdaptiveResolution { get; set; } = true;
+
+	/// <summary>The lowest resolution automatic lowering may drop to (0.4 .. 1; 1 = never lower).</summary>
+	public float AdaptiveMin { get; set; } = 0.7f;
 
 	/// <summary>How much coral grows on the reef (1 = normal). Independent of the quality level.</summary>
 	public float CoralDensity { get; set; } = 1f;
@@ -254,6 +257,22 @@ public sealed class ReefSettings
 		return JsonSerializer.Deserialize<ReefSettings>(JsonSerializer.Serialize(this, Json), Json);
 	}
 
+	/// <summary>
+	/// The Simple page's one slider: quality level 1..10 also sets how many fish and corals there are and how far
+	/// automatic resolution may drop (70% at level 1, never at level 10). Full resolution is the starting point.
+	/// </summary>
+	public void ApplySimpleLevel(int level)
+	{
+		level = Math.Clamp(level, 1, 10);
+		float t = (level - 1) / 9f;
+		QualityLevel = level;
+		RenderScale = 1f;
+		AdaptiveResolution = true;
+		AdaptiveMin = MathF.Round((0.7f + 0.3f * t) * 100f) / 100f;
+		FishDensity = MathF.Round((0.2f + 1.3f * t) * 100f) / 100f;
+		CoralDensity = MathF.Round((1.0f + 0.6f * t) * 100f) / 100f;
+	}
+
 	public string ToJson()
 	{
 		return JsonSerializer.Serialize(this, Json);
@@ -271,6 +290,7 @@ public sealed class ReefSettings
 		Volume = Math.Clamp(Volume, 0f, 1f);
 		RenderScale = RenderScale <= 0f ? 1f : Math.Clamp(RenderScale, 0.4f, 1f);
 		CoralDensity = Math.Clamp(CoralDensity, 0.3f, 2f);
+		AdaptiveMin = AdaptiveMin <= 0f ? 0.7f : Math.Clamp(AdaptiveMin, 0.4f, 1f);
 		// older settings: a fixed Off/On shadow choice becomes an explicit shadow size
 		if (ShadowResolution < 0 && Shadows == EffectQuality.Off) ShadowResolution = 0;
 		if (ShadowResolution < 0 && Shadows == EffectQuality.On) ShadowResolution = 2048;

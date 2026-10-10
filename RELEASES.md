@@ -2,7 +2,7 @@
 
 | Version | Date | File | SHA-256 |
 |---|---|---|---|
-| 7.25.0 | 2026-10-10 | [UltraAquarium-7.25.0.msi](download/UltraAquarium-7.25.0.msi) | `20ecbd1041a814dece205217556ee21636626b5b37a1f0c85d0c7352d30c7242` |
+| 7.25.0 | 2026-10-10 | [UltraAquarium-7.25.0.msi](download/UltraAquarium-7.25.0.msi) | `b8284f7ebb6ae8ff83c372b67ab63fe6b56019d65194750e991e2957cb739604` |
 | 7.0.3 | 2026-10-01 | [UltraAquarium-7.0.3.msi](download/UltraAquarium-7.0.3.msi) | `8f62d4452340a0f47429d8888d1acd4ea70e79cd2121fba9acd1cd0495e2d9cb` |
 
 ## 7.25.0
@@ -27,6 +27,8 @@
 18. Rocks sit in the sand, with drifts of coarse shell sand, and look better on the lowest quality levels.
 19. Wide view: a new setting that shows the whole scene across two or three monitors.
 20. Smoother on laptops: high-refresh screens are no longer held to 60 fps, and the graphics card can be picked by name.
+
+A new, simple settings window: your screens front and centre, one quality slider (it also sets how many fish and corals there are and how far the resolution may drop to keep things smooth) and a big Launch button. Every other setting is one click away under Advanced. Changes save by themselves, and links in notes from Technology 83 are clickable.
 
 Older versions stay available on the website and here. Updates are never forced: the app offers them and you choose.
 

@@ -130,7 +130,7 @@ footer{color:var(--mute);font-size:13.5px;padding:34px 0 40px}
 </style></head><body>
 <section class="hero">
 <header class="top"><img src="/icon.png" alt=""><div class="name">Ultra Aquarium<small>by Technology 83</small></div></header>
-<video id="bg" muted loop playsinline preload="none" poster="/hero-poster.jpg" aria-label="Ultra Aquarium running: the reef, a sea turtle, a shark and Octopus Boy"></video>
+<video id="bg" muted loop playsinline preload="none" poster="/hero-poster.jpg" aria-label="Ultra Aquarium running: the reef and Octopus Boy"></video>
 <div class="shade"></div>
 <div class="say"><div class="wrap">
 <h1>One aquarium across all your screens.</h1>
