@@ -35,6 +35,23 @@ html{background:var(--abyss)}
 body{margin:0;color:var(--ice);font:17px/1.6 Manrope,"Segoe UI",system-ui,sans-serif}
 a{color:var(--electric)}
 .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+/* the picture viewer: opens over the page, pictures fade in and slide as you browse */
+.lb{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;background:rgba(3,8,16,.94);opacity:0;visibility:hidden;transition:opacity .35s ease,visibility 0s linear .35s;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.lb.on{opacity:1;visibility:visible;transition:opacity .35s ease}
+.lb .stage{position:relative;width:min(92vw,calc(82vh*16/9));aspect-ratio:16/9;overflow:hidden;border-radius:10px;box-shadow:0 30px 90px rgba(0,0,0,.6)}
+.lb .slide{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#020509;opacity:0;transform:translateX(0) scale(.98);transition:opacity .45s ease,transform .55s cubic-bezier(.2,.75,.2,1)}
+.lb .slide.in{opacity:1;transform:none}
+.lb .slide.from-r{transform:translateX(9%)}.lb .slide.from-l{transform:translateX(-9%)}
+.lb .slide.out-l{opacity:0;transform:translateX(-9%)}.lb .slide.out-r{opacity:0;transform:translateX(9%)}
+.lb .cap{position:absolute;left:0;right:0;bottom:max(18px,calc((100vh - 82vh)/2 - 46px));text-align:center;color:#d9ecff;font-size:15px;letter-spacing:.01em;pointer-events:none}
+.lb .cap b{color:var(--mute);font-weight:600;margin-left:10px}
+.lb button{position:absolute;border:0;background:rgba(255,255,255,.08);color:#fff;width:52px;height:52px;border-radius:50%;font-size:26px;line-height:52px;cursor:pointer;transition:background .2s;padding:0}
+.lb button:hover{background:rgba(255,255,255,.18)}
+.lb .prev{left:max(12px,2vw)}.lb .next{right:max(12px,2vw)}
+.lb .x{top:16px;right:16px;width:44px;height:44px;line-height:44px;font-size:22px}
+@media (max-width:700px){.lb .stage{width:100vw;border-radius:0}.lb .prev,.lb .next{top:auto;bottom:22px}.lb .cap{bottom:90px}}
+@media (prefers-reduced-motion:reduce){.lb,.lb .slide{transition:none}}
+.grid a{cursor:zoom-in}
 /* three monitors on a desk, the reef running across them */
 .multi{padding:8px 0 10px;overflow-x:clip}
 .desk{position:relative;margin:6px auto 34px;max-width:1080px;padding-bottom:30px}
@@ -211,14 +228,14 @@ footer{color:var(--mute);font-size:13.5px;padding:34px 0 40px}
 <li>A cleaning station where small wrasse pick over the bigger fish.</li>
 <li>New cameras: follow the octopus, follow a fish, or take a slow tour of the reef.</li>
 <li>A much simpler settings window. Your changes save on their own.</li>
-<li>Smoother on laptops, and no longer stuck at 60 fps on high refresh screens.</li>
+<li>Runs smoother on laptops.</li>
 </ul>
 </section>
 
 <section class="gal" id="pictures">
 <h2>Screenshots</h2>
 <p>All taken straight from the app. Click any of them to see it full size.</p>
-<div class="grid">
+<div class="grid" id="shots">
 <a href="/gallery/reef.jpg" target="_blank" rel="noopener"><img src="/gallery/reef-t.jpg" loading="lazy" width="480" height="270" alt="The reef at midday"></a>
 <a href="/gallery/octopus.jpg" target="_blank" rel="noopener"><img src="/gallery/octopus-t.jpg" loading="lazy" width="480" height="270" alt="The octopus crossing the sand"></a>
 <a href="/gallery/turtle.jpg" target="_blank" rel="noopener"><img src="/gallery/turtle-t.jpg" loading="lazy" width="480" height="270" alt="The rebuilt sea turtle"></a>
@@ -256,7 +273,7 @@ footer{color:var(--mute);font-size:13.5px;padding:34px 0 40px}
 </div>
 <div>
 <h2>How it was made</h2>
-<p>Ultra Aquarium was built with the latest frontier AI models, including Claude and Grok. Many thousands of dollars' worth of AI credits went into it: the fish, Octopus Boy, the lighting, the way everything moves. It took a lot of tries to get it looking right.</p>
+<p>Ultra Aquarium was built with the latest frontier AI models, including Claude, ChatGPT and Grok. Many thousands of dollars' worth of AI credits went into it: the fish, Octopus Boy, the lighting, the way everything moves. It took a lot of tries to get it looking right.</p>
 <p>Curious what it does on your PC? Everything that touches your computer or the internet, including the settings, the updates, the installer and this website, is <a href="https://github.com/leksicon1/aquarium">on GitHub</a> for anyone to read.</p>
 </div>
 </section>
@@ -271,6 +288,74 @@ ${prev.length ? `<p>Want an older version? Uninstall Ultra Aquarium first (Windo
 <footer>© 2026 Technology 83 Systems Ltd. · <a href="https://github.com/leksicon1/aquarium">Ultra Aquarium on GitHub</a></footer>
 </div>
 <script>
+// Picture viewer: click a screenshot and it opens large; arrows, swipe or the keyboard move between them.
+(function () {
+  var links = [].slice.call(document.querySelectorAll("#shots a"));
+  if (!links.length) return;
+  var lb = document.createElement("div");
+  lb.className = "lb"; lb.setAttribute("role", "dialog"); lb.setAttribute("aria-modal", "true"); lb.setAttribute("aria-label", "Screenshots");
+  lb.innerHTML = '<div class="stage"></div><p class="cap"></p><button class="prev" aria-label="Previous picture">&#8249;</button><button class="next" aria-label="Next picture">&#8250;</button><button class="x" aria-label="Close">&#10005;</button>';
+  document.body.appendChild(lb);
+  var stage = lb.querySelector(".stage"), cap = lb.querySelector(".cap"), cur = -1, last = null, opener = null;
+  function src(i) { return links[i].getAttribute("href"); }
+  function preload(i) { var im = new Image(); im.src = src((i + links.length) % links.length); }
+  function show(i, dir) {
+    i = (i + links.length) % links.length;
+    var img = document.createElement("img");
+    img.className = "slide" + (dir > 0 ? " from-r" : dir < 0 ? " from-l" : "");
+    img.alt = links[i].querySelector("img").alt;
+    img.src = src(i);
+    stage.appendChild(img);
+    var go = function () { requestAnimationFrame(function () { requestAnimationFrame(function () { img.className = "slide in"; }); }); };
+    if (img.complete) go(); else { img.onload = go; img.onerror = go; }
+    if (last) {
+      var old = last;
+      old.className = "slide " + (dir >= 0 ? "out-l" : "out-r");
+      setTimeout(function () { if (old.parentNode) old.parentNode.removeChild(old); }, 600);
+    }
+    last = img; cur = i;
+    cap.innerHTML = "";
+    cap.appendChild(document.createTextNode(img.alt));
+    var n = document.createElement("b"); n.textContent = (i + 1) + " / " + links.length; cap.appendChild(n);
+    preload(i + 1); preload(i - 1);
+  }
+  function open(i) {
+    opener = document.activeElement;
+    stage.innerHTML = ""; last = null;
+    show(i, 0);
+    lb.classList.add("on");
+    document.documentElement.style.overflow = "hidden";
+    lb.querySelector(".x").focus({ preventScroll: true });
+  }
+  function close() {
+    lb.classList.remove("on");
+    document.documentElement.style.overflow = "";
+    if (opener && opener.focus) opener.focus({ preventScroll: true });
+  }
+  links.forEach(function (a, i) {
+    a.addEventListener("click", function (e) {
+      if (e.ctrlKey || e.metaKey || e.shiftKey || e.button) return;   // new tab still works
+      e.preventDefault(); open(i);
+    });
+  });
+  lb.querySelector(".prev").onclick = function () { show(cur - 1, -1); };
+  lb.querySelector(".next").onclick = function () { show(cur + 1, 1); };
+  lb.querySelector(".x").onclick = close;
+  lb.addEventListener("click", function (e) { if (e.target === lb) close(); });
+  document.addEventListener("keydown", function (e) {
+    if (!lb.classList.contains("on")) return;
+    if (e.key === "Escape") close();
+    else if (e.key === "ArrowRight") show(cur + 1, 1);
+    else if (e.key === "ArrowLeft") show(cur - 1, -1);
+  });
+  var x0 = null;
+  stage.addEventListener("touchstart", function (e) { x0 = e.touches[0].clientX; }, { passive: true });
+  stage.addEventListener("touchend", function (e) {
+    if (x0 === null) return;
+    var dx = e.changedTouches[0].clientX - x0; x0 = null;
+    if (Math.abs(dx) > 40) show(cur + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1);
+  });
+})();
 // Short clips play only while on screen, and load only when first scrolled near.
 (function () {
   var c = navigator.connection || {};
