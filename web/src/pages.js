@@ -174,7 +174,7 @@ footer{color:var(--mute);font-size:13.5px;padding:34px 0 40px}
 </style></head><body>
 <section class="hero">
 <header class="top"><img src="/icon.png" alt=""><div class="name">Ultra Aquarium<small>by Technology 83</small></div></header>
-<video id="bg" muted loop playsinline preload="none" poster="/hero-poster.jpg" aria-label="Ultra Aquarium running: the reef and Octopus Boy"></video>
+<video id="bg" muted loop playsinline preload="none" poster="/hero-poster.jpg?v=2" aria-label="Ultra Aquarium running: the reef and Octopus Boy"></video>
 <div class="shade"></div>
 <div class="say"><div class="wrap">
 <h1>The best aquarium screensaver in the world.</h1>
@@ -209,7 +209,7 @@ footer{color:var(--mute);font-size:13.5px;padding:34px 0 40px}
 <h2 id="ob-title">Octopus Boy!</h2>
 <p class="story">Meet the newest resident. He lives in a cave under the big rock and pretty much does his own thing. He crawls around on all eight arms, changes colour to blend in with the sand or the rock, and if something spooks him, he's gone in a flash. He comes out more at night.</p>
 <div class="panels">
-<figure class="p big"><video class="clip" muted loop playsinline preload="none" poster="/clip-octopus.jpg" data-src="/clip-octopus.mp4" aria-label="Octopus Boy crawling across the sand"></video><figcaption>Out for a crawl</figcaption></figure>
+<figure class="p big"><video class="clip" muted loop playsinline preload="none" poster="/clip-octopus.jpg?v=2" data-src="/clip-octopus.mp4?v=2" aria-label="Octopus Boy crawling across the sand"></video><figcaption>Out for a crawl</figcaption></figure>
 <figure class="p"><img src="/ob-1.jpg" loading="lazy" width="800" height="450" alt="Octopus Boy stretched out on the sand"><figcaption>All eight arms</figcaption></figure>
 <figure class="p"><img src="/ob-2.jpg" loading="lazy" width="800" height="450" alt="Octopus Boy close up beside a rock"><figcaption>Keeping an eye on things</figcaption></figure>
 <figure class="p"><img src="/ob-3.jpg" loading="lazy" width="800" height="450" alt="Octopus Boy coloured like the rock beside him"><figcaption>Blending in</figcaption></figure>
@@ -257,12 +257,12 @@ footer{color:var(--mute);font-size:13.5px;padding:34px 0 40px}
 
 <section class="feat">
 <h2>What's in the tank</h2>
-<div class="f"><video class="clip" muted loop playsinline preload="none" poster="/clip-manta.jpg" data-src="/clip-manta.mp4" width="1280" height="720" aria-label="A manta ray gliding over the reef"></video><div><h3>Visitors</h3><p>Every so often something big comes through. A manta ray, a shark, a sea turtle, or a whale off in the distance. On a multi-monitor setup they cross from one screen to the next. You can pick which ones show up and how often.</p></div></div>
+<div class="f"><video class="clip" muted loop playsinline preload="none" poster="/clip-manta.jpg?v=2" data-src="/clip-manta.mp4?v=2" width="1280" height="720" aria-label="A manta ray gliding over the reef"></video><div><h3>Visitors</h3><p>Every so often something big comes through. A manta ray, a shark, a sea turtle, or a whale off in the distance. On a multi-monitor setup they cross from one screen to the next. You can pick which ones show up and how often.</p></div></div>
 <div class="f"><img src="/f-feed.jpg" loading="lazy" width="1120" height="630" alt="Fish gathering at the surface around falling food"><div><h3>Feeding time</h3><p>Press F and food sprinkles in from the surface. The closest fish come up to eat, and more join in if you keep feeding. You can change the key if you like.</p></div></div>
 <div class="f"><div class="pair"><img src="/f-dusk.jpg" loading="lazy" width="1120" height="630" alt="The reef in warm evening light"><img src="/f-night.jpg" loading="lazy" width="1120" height="630" alt="The reef at night with glowing coral"></div><div><h3>Day and night</h3><p>The light follows the clock on your PC. Bright in the morning, warm in the evening, and at night it gets dark and the coral glows. Or lock it to your favourite time of day.</p></div></div>
 <div class="f"><div class="pair"><img src="/f-settings.jpg" loading="lazy" alt="The My Fish page in settings, with sliders for a fish called Sunset Tang"><img src="/f-myfish.jpg" loading="lazy" width="1120" height="630" alt="Custom striped fish swimming with the others"></div><div><h3>Make your own fish</h3><p>Pick a name, size, shape, colours and pattern, how many you want, and whether they school together. They swim right alongside everything else.</p></div></div>
 <div class="f"><img src="/f-clock.jpg" loading="lazy" width="1120" height="630" alt="The aquarium with a small clock in the top corner"><div><h3>A clock, or your own message</h3><p>Put a clock in the corner, or add your own words to the tank. They can be written in the sand, or spelled out by a school of fish.</p></div></div>
-<div class="f"><video class="clip" muted loop playsinline preload="none" poster="/clip-stingray.jpg" data-src="/clip-stingray.mp4" width="1280" height="720" aria-label="A blue-spotted stingray gliding over the sand"></video><div><h3>Screensaver, wallpaper, or just watch</h3><p>Use it as your screensaver, as live wallpaper behind your desktop icons, or open it full screen whenever you want to sit back and watch.</p></div></div>
+<div class="f"><video class="clip" muted loop playsinline preload="none" poster="/clip-stingray.jpg?v=2" data-src="/clip-stingray.mp4?v=2" width="1280" height="720" aria-label="A blue-spotted stingray gliding over the sand"></video><div><h3>Screensaver, wallpaper, or just watch</h3><p>Use it as your screensaver, as live wallpaper behind your desktop icons, or open it full screen whenever you want to sit back and watch.</p></div></div>
 </section>
 
 <section class="story2">
@@ -380,9 +380,9 @@ addEventListener("load", function () {
   // phones get the 720p file; larger screens get 1080p, as AV1 where the browser can play it (sharper at the same size)
   var px = Math.min(innerWidth, screen.width) * Math.min(devicePixelRatio || 1, 2);
   var av1 = v.canPlayType('video/mp4; codecs="av01.0.09M.08"') === "probably";
-  v.src = px <= 900 ? "/hero-720.mp4" : av1 ? "/hero-1080-av1.mp4" : "/hero-1080.mp4";
+  v.src = px <= 900 ? "/hero-720.mp4?v=2" : av1 ? "/hero-1080-av1.mp4?v=2" : "/hero-1080.mp4?v=2";
   // if the chosen file fails for any reason, fall back to the plain H.264 one
-  v.addEventListener("error", function () { if (!/hero-1080\.mp4$/.test(v.src) && px > 900) { v.src = "/hero-1080.mp4"; v.play().catch(function () {}); } }, { once: true });
+  v.addEventListener("error", function () { if (!/hero-1080\.mp4(\?|$)/.test(v.src) && px > 900) { v.src = "/hero-1080.mp4?v=2"; v.play().catch(function () {}); } }, { once: true });
   var p = v.play(); if (p && p.catch) p.catch(function () {});
 });
 </script>
