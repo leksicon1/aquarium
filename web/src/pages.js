@@ -382,7 +382,7 @@ addEventListener("load", function () {
   var av1 = v.canPlayType('video/mp4; codecs="av01.0.09M.08"') === "probably";
   v.src = px <= 900 ? "/hero-720.mp4?v=2" : av1 ? "/hero-1080-av1.mp4?v=2" : "/hero-1080.mp4?v=2";
   // if the chosen file fails for any reason, fall back to the plain H.264 one
-  v.addEventListener("error", function () { if (!/hero-1080\.mp4(\?|$)/.test(v.src) && px > 900) { v.src = "/hero-1080.mp4?v=2"; v.play().catch(function () {}); } }, { once: true });
+  v.addEventListener("error", function () { if (!/hero-1080\.mp4(\\?|$)/.test(v.src) && px > 900) { v.src = "/hero-1080.mp4?v=2"; v.play().catch(function () {}); } }, { once: true });
   var p = v.play(); if (p && p.catch) p.catch(function () {});
 });
 </script>
