@@ -178,7 +178,7 @@ footer{color:var(--mute);font-size:13.5px;padding:34px 0 40px}
 <div class="shade"></div>
 <div class="say"><div class="wrap">
 <h1>The best aquarium screensaver in the world.</h1>
-<div class="get">${rel ? `<a class="btn" href="/download" rel="nofollow">Download for Windows</a><span class="meta">Free. Version ${v}, ${mb} MB. Windows 10 or 11, 64-bit. <a href="#octopus-boy">What's new</a></span>` : `<span class="meta">The download will be here shortly.</span>`}</div>
+<div class="get">${rel ? `<a class="btn" href="/download" rel="nofollow">Download for Windows</a><span class="meta">Free. Version ${v}, ${mb} MB. Windows 10 or 11, 64-bit. <a href="#new">What's new</a></span>` : `<span class="meta">The download will be here shortly.</span>`}</div>
 </div></div>
 </section>
 <div class="wrap wallwrap"><main>
@@ -219,7 +219,16 @@ footer{color:var(--mute);font-size:13.5px;padding:34px 0 40px}
 </section>
 
 <section class="also" id="new">
-<h2>Also new in ${v.replace(/\.0$/, "")}</h2>
+<h2>New in 7.25.1</h2>
+<ul>
+<li>Better fish models: fins look like fins now.</li>
+<li>Extra decorations in the tank, like an old diver's helmet half buried in the sand.</li>
+<li>Lots of general fixes.</li>
+</ul>
+</section>
+
+<section class="also" id="new-725">
+<h2>Also new in 7.25</h2>
 <ul>
 <li>Every fish now has real eyes that look around, and a mouth that opens and closes.</li>
 <li>Little front fins that flutter, like real fish.</li>
@@ -236,6 +245,7 @@ footer{color:var(--mute);font-size:13.5px;padding:34px 0 40px}
 <h2>Screenshots</h2>
 <p>All taken straight from the app. Click any of them to see it full size.</p>
 <div class="grid" id="shots">
+<a href="/gallery/diver.jpg" target="_blank" rel="noopener"><img src="/gallery/diver-t.jpg" loading="lazy" width="480" height="270" alt="An old diver's helmet half buried in the sand, bubbling"></a>
 <a href="/gallery/reef.jpg" target="_blank" rel="noopener"><img src="/gallery/reef-t.jpg" loading="lazy" width="480" height="270" alt="The reef at midday"></a>
 <a href="/gallery/octopus.jpg" target="_blank" rel="noopener"><img src="/gallery/octopus-t.jpg" loading="lazy" width="480" height="270" alt="The octopus crossing the sand"></a>
 <a href="/gallery/turtle.jpg" target="_blank" rel="noopener"><img src="/gallery/turtle-t.jpg" loading="lazy" width="480" height="270" alt="The rebuilt sea turtle"></a>

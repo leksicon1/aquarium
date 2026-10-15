@@ -2,8 +2,15 @@
 
 | Version | Date | File | SHA-256 |
 |---|---|---|---|
+| 7.25.1 | 2026-10-15 | [UltraAquarium-7.25.1.msi](download/UltraAquarium-7.25.1.msi) | `6b731ce31d90ec45407a492ebd4b67436d849f8e0a97eda075480295504d28fe` |
 | 7.25.0 | 2026-10-10 | [UltraAquarium-7.25.0.msi](download/UltraAquarium-7.25.0.msi) | `b8284f7ebb6ae8ff83c372b67ab63fe6b56019d65194750e991e2957cb739604` |
 | 7.0.3 | 2026-10-01 | [UltraAquarium-7.0.3.msi](download/UltraAquarium-7.0.3.msi) | `8f62d4452340a0f47429d8888d1acd4ea70e79cd2121fba9acd1cd0495e2d9cb` |
+
+## 7.25.1
+
+- Better fish models: dorsal and bottom fins are thin fins now instead of part of the body, and the shark's side fins meet its body.
+- Extra decorations: an old diver's helmet half buried in the sand, bubbling from its valve.
+- General fixes: the octopus no longer gets stuck walking into rock and swims more often, the shark swims in calm glides and short bursts, stingrays wander instead of gliding in straight lines, grass bends as animals pass, open mouths are no longer black, the My Fish page lays out correctly on scaled screens, and rock looks better at the lowest quality levels.
 
 ## 7.25.0
 
